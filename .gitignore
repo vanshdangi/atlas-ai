@@ -1,0 +1,29 @@
+# ===== Models =====
+models/
+*.gguf
+*.bin
+
+# ===== Build artifacts =====
+build/
+cmake-build-*/
+CMakeFiles/
+CMakeCache.txt
+Makefile
+
+# ===== Python =====
+__pycache__/
+*.pyc
+.venv/
+env/
+
+# ===== Logs =====
+logs/
+*.log
+
+# ===== OS junk =====
+.DS_Store
+Thumbs.db
+
+# ===== Secrets =====
+.env
+*.key
