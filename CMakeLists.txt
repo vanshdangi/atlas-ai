@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.26)
-project(llama_app LANGUAGES CXX CUDA)
+project(atlas_ai LANGUAGES CXX CUDA)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -7,16 +7,46 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 # Force static libraries
 set(BUILD_SHARED_LIBS OFF CACHE BOOL "" FORCE)
 
-# Enable CUDA for llama.cpp
+# Enable CUDA for llama.cpp / ggml
 set(GGML_CUDA ON CACHE BOOL "" FORCE)
 
-# Add llama.cpp as a subproject
+# ---------------- Dependencies ----------------
 add_subdirectory(external/llama.cpp)
+add_subdirectory(external/whisper.cpp)
 
-# Your executable
-add_executable(llama_app
-    core/main.cpp
+# ---------------- Sources ----------------
+set(ATLAS_SOURCES
+    core/src/main.cpp
+    core/src/utils.cpp
+
+    # LLM
+    core/src/llm/llamaEngine.cpp
+
+    # Speech
+    core/src/speech/audioInput.cpp
+    core/src/speech/whisperSTT.cpp
 )
 
-# Link against llama
-target_link_libraries(llama_app PRIVATE llama)
+# ---------------- Executable ----------------
+add_executable(atlas_ai
+    ${ATLAS_SOURCES}
+)
+
+# ---------------- Includes ----------------
+target_include_directories(atlas_ai
+    PRIVATE
+        core/include
+)
+
+# ---------------- Linking ----------------
+target_link_libraries(atlas_ai
+    PRIVATE
+        llama
+        whisper
+        winmm
+)
+
+target_compile_definitions(atlas_ai PRIVATE
+    GGML_LOG_LEVEL=GGML_LOG_LEVEL_ERROR
+    LLAMA_LOG_DISABLE
+)
