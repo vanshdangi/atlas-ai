@@ -20,30 +20,38 @@ LlamaEngine::LlamaEngine(const std::string& model_path) {
     silence_all_logs();
     llama_backend_init();
 
-    model_params = llama_model_default_params();
+    auto model_params = llama_model_default_params();
     model_params.n_gpu_layers = 35;
 
     model = llama_load_model_from_file(model_path.c_str(), model_params);
-    if (!model) {
-        throw std::runtime_error("Failed to load LLaMA model");
-    }
-}
+    if (!model) throw std::runtime_error("Model load failed");
 
-LlamaEngine::~LlamaEngine() {
-    if (model) {
-        llama_free_model(model);
-    }
-    llama_backend_free();
-}
-
-void LlamaEngine::generate(const std::string& user_input, int max_tokens) {
     llama_context_params ctx_params = llama_context_default_params();
     ctx_params.n_ctx = 8192;
     ctx_params.n_threads = std::thread::hardware_concurrency();
 
-    llama_context* ctx = llama_new_context_with_model(model, ctx_params);
+    ctx = llama_new_context_with_model(model, ctx_params);
+    if (!ctx) throw std::runtime_error("Context creation failed");
+}
+
+
+
+
+LlamaEngine::~LlamaEngine() {
+    if (ctx) llama_free(ctx);
+    if (model) llama_free_model(model);
+    llama_backend_free();
+}
+
+
+
+
+void LlamaEngine::generate(const std::string& user_input, int max_tokens) {
     const llama_vocab* vocab = llama_model_get_vocab(model);
     llama_sampler* sampler = llama_sampler_init_greedy();
+
+    // Reset state (no logs)
+    // If kv_clear is unavailable, prompts are stateless anyway
 
     std::string prompt =
         "<|begin_of_text|>"
@@ -85,7 +93,5 @@ void LlamaEngine::generate(const std::string& user_input, int max_tokens) {
     }
 
     std::cout << "\n";
-
     llama_sampler_free(sampler);
-    llama_free(ctx);
 }

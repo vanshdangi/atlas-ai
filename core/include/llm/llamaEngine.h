@@ -12,5 +12,5 @@ public:
 
 private:
     llama_model* model = nullptr;
-    llama_model_params model_params{};
+    llama_context* ctx = nullptr;
 };
