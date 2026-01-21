@@ -2,7 +2,8 @@
 #include "speech/audioInput.h"
 #include "speech/whisperSTT.h"
 #include "llm/llamaEngine.h"
-#include "utils.h"
+#include "utils/utils.h"
+#include "memory/memoryManager.h"
 
 static void print_divider(char ch = '─', int width = 54) {
     for (int i = 0; i < width; ++i) std::cout << ch;
@@ -26,24 +27,44 @@ int main() {
 
     std::system("cls");
 
+    MemoryManager memory("../../core/data");
+    memory.load();
+
     while (true) {
         print_section("🎤 Listening...");
 
+        // Record Input
         auto audio = record_audio(5);
         std::string input = whisper.transcribe(audio);
         trim_and_normalize(input);
+        memory.conversation.add_user(input);
 
+        // Print Input
         std::cout << "\nYou  : " << input << "\n\n";
 
+        // Exit Commands
         if (input == "exit" || input == "quit" ||
             input == "exit program" || input == "stop") {
             break;
         }
 
+        //Build Prompt
+        std::string prompt =
+            memory.facts.to_prompt_block() +
+            memory.conversation.build_prompt(input);
+
+        // Print Output
         print_divider();
         std::cout << "Atlas:\n";
 
-        llama.generate(input);
+        // Generate Output
+        std::string output = llama.generate_from_prompt(prompt);
+        std::cout << output << "\n";
+
+        // Save Output
+        memory.conversation.add_assistant(output);
+        memory.conversation.trim();
+        memory.save();
 
         print_divider();
         std::cout << "\n";

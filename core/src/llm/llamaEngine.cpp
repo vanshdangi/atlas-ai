@@ -46,19 +46,12 @@ LlamaEngine::~LlamaEngine() {
 
 
 
-void LlamaEngine::generate(const std::string& user_input, int max_tokens) {
+std::string LlamaEngine::generate_from_prompt(
+    const std::string& prompt,
+    int max_tokens
+) {
     const llama_vocab* vocab = llama_model_get_vocab(model);
     llama_sampler* sampler = llama_sampler_init_greedy();
-
-    // Reset state (no logs)
-    // If kv_clear is unavailable, prompts are stateless anyway
-
-    std::string prompt =
-        "<|begin_of_text|>"
-        "<|start_header_id|>user<|end_header_id|>\n"
-        + user_input + "\n"
-        "<|eot_id|>"
-        "<|start_header_id|>assistant<|end_header_id|>\n";
 
     std::vector<llama_token> tokens(prompt.size());
     int n = llama_tokenize(
@@ -74,6 +67,8 @@ void LlamaEngine::generate(const std::string& user_input, int max_tokens) {
 
     llama_decode(ctx, llama_batch_get_one(tokens.data(), tokens.size()));
 
+    std::string output;
+
     for (int i = 0; i < max_tokens; ++i) {
         llama_token token = llama_sampler_sample(sampler, ctx, -1);
         if (token == llama_vocab_eos(vocab)) break;
@@ -87,11 +82,10 @@ void LlamaEngine::generate(const std::string& user_input, int max_tokens) {
         );
 
         if (len > 0) {
-            std::cout.write(buffer, len);
-            std::cout.flush();
+            output.append(buffer, len);
         }
     }
 
-    std::cout << "\n";
     llama_sampler_free(sampler);
+    return output;
 }

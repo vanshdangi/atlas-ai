@@ -13,14 +13,20 @@ set(GGML_CUDA ON CACHE BOOL "" FORCE)
 # ---------------- Dependencies ----------------
 add_subdirectory(external/llama.cpp)
 add_subdirectory(external/whisper.cpp)
+add_subdirectory(external/json)
 
 # ---------------- Sources ----------------
 set(ATLAS_SOURCES
     core/src/main.cpp
-    core/src/utils.cpp
+    core/src/utils/utils.cpp
 
     # LLM
     core/src/llm/llamaEngine.cpp
+
+    # Memory
+    core/src/memory/conversationMemory.cpp
+    core/src/memory/factMemory.cpp
+    core/src/memory/memoryManager.cpp
 
     # Speech
     core/src/speech/audioInput.cpp
@@ -44,6 +50,7 @@ target_link_libraries(atlas_ai
         llama
         whisper
         winmm
+        nlohmann_json::nlohmann_json
 )
 
 target_compile_definitions(atlas_ai PRIVATE
