@@ -31,5 +31,8 @@ Thumbs.db
 # ===== vscode =====
 .vscode/
 
-# Runtime memory
-core/data/memory/
+# data
+core/data/
+
+# Externals
+external/piper

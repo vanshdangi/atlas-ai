@@ -1,9 +1,13 @@
 #include <iostream>
 #include "speech/audioInput.h"
 #include "speech/whisperSTT.h"
+#include "speech/piperTTS.h"
 #include "llm/llamaEngine.h"
 #include "utils/utils.h"
 #include "memory/memoryManager.h"
+#include <windows.h>
+#include <mmsystem.h>
+#pragma comment(lib, "winmm.lib")
 
 static void print_divider(char ch = '─', int width = 54) {
     for (int i = 0; i < width; ++i) std::cout << ch;
@@ -65,6 +69,9 @@ int main() {
         memory.conversation.add_assistant(output);
         memory.conversation.trim();
         memory.save();
+
+        generate_audio_file(output);
+        play_audio_file();
 
         print_divider();
         std::cout << "\n";
