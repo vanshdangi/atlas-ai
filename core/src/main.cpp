@@ -9,15 +9,15 @@
 #include <mmsystem.h>
 #pragma comment(lib, "winmm.lib")
 
-static void print_divider(char ch = '─', int width = 54) {
+static void print_divider(char ch = '-', int width = 54) {
     for (int i = 0; i < width; ++i) std::cout << ch;
     std::cout << "\n";
 }
 
 static void print_section(const std::string& title) {
-    print_divider('═');
+    print_divider('=');
     std::cout << title << "\n";
-    print_divider('═');
+    print_divider('=');
 }
 
 int main() {
@@ -35,6 +35,7 @@ int main() {
     memory.load();
 
     while (true) {
+        /* Voice Input
         print_section("🎤 Listening...");
 
         // Record Input
@@ -45,6 +46,12 @@ int main() {
 
         // Print Input
         std::cout << "\nYou  : " << input << "\n\n";
+        */
+
+        std::string input;
+        std::cout << "\nYou  :  ";
+        std::getline(std::cin, input);
+        std::cout << "\n";
 
         // Exit Commands
         if (input == "exit" || input == "quit" ||
@@ -62,7 +69,7 @@ int main() {
         std::cout << "Atlas:\n";
 
         // Generate Output
-        std::string output = llama.generate_from_prompt(prompt);
+        std::string output = llama.generate_from_prompt(prompt, 1024);
         std::cout << output << "\n";
 
         // Save Output
@@ -70,8 +77,10 @@ int main() {
         memory.conversation.trim();
         memory.save();
 
+        /* Voice Output
         generate_audio_file(output);
         play_audio_file();
+        */
 
         print_divider();
         std::cout << "\n";
