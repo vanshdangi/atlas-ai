@@ -12,7 +12,7 @@ public:
     void add_user(const std::string& text);
     void add_assistant(const std::string& text);
 
-    std::string build_prompt(const std::string& user_input) const;
+    std::string to_prompt_block() const;
     void trim(size_t max_messages = 10);
 
 private:

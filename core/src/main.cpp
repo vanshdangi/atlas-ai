@@ -8,6 +8,7 @@
 #include "speech/whisperSTT.h"
 #include "speech/piperTTS.h"
 #include "llm/llamaEngine.h"
+#include "llm/promptBuilder.h"
 #include "utils/utils.h"
 #include "memory/memoryManager.h"
 #include <windows.h>
@@ -72,27 +73,13 @@ int main() {
             break;
         }
 
-        if (input.rfind("open ", 0) == 0) {
-            std::string app = input.substr(5);
-            std::cout << registry.runTool("open_app", app) << "\n";
-            continue;
-        }
-
-        if (input.rfind("remind ", 0) == 0) {
-            std::string reminder = input.substr(7);
-            std::cout << registry.runTool("create_reminder", reminder) << "\n";
-            continue;
-        }
-
-        if (input == "shutdown") {
-            std::cout << registry.runTool("shutdown_pc", "") << "\n";
-            continue;
-        }
-
         //Build Prompt
         std::string prompt =
-            memory.facts.to_prompt_block() +
-            memory.conversation.build_prompt(input);
+            PromptBuilder::build(
+                input,
+                memory.facts,
+                memory.conversation
+            );
 
         // Print Output
         print_divider();

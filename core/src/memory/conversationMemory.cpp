@@ -14,17 +14,13 @@ void ConversationMemory::trim(size_t max_messages) {
     }
 }
 
-std::string ConversationMemory::build_prompt(const std::string& user_input) const {
-    std::string prompt = "<|begin_of_text|>";
+std::string ConversationMemory::to_prompt_block() const {
+    std::string block;
 
     for (const auto& msg : history) {
-        prompt += "<|start_header_id|>" + msg.role + "<|end_header_id|>\n";
-        prompt += msg.content + "\n<|eot_id|>";
+        block += "<|start_header_id|>" + msg.role + "<|end_header_id|>\n";
+        block += msg.content + "\n<|eot_id|>\n";
     }
 
-    prompt += "<|start_header_id|>user<|end_header_id|>\n";
-    prompt += user_input + "\n<|eot_id|>";
-    prompt += "<|start_header_id|>assistant<|end_header_id|>\n";
-
-    return prompt;
+    return block;
 }

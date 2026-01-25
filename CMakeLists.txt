@@ -22,6 +22,7 @@ set(ATLAS_SOURCES
 
     # LLM
     core/src/llm/llamaEngine.cpp
+    core/src/llm/promptBuilder.cpp
 
     # Memory
     core/src/memory/conversationMemory.cpp
