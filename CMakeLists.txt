@@ -32,6 +32,13 @@ set(ATLAS_SOURCES
     core/src/speech/audioInput.cpp
     core/src/speech/whisperSTT.cpp
     core/src/speech/piperTTS.cpp
+
+    # Tools
+    core/src/tools/toolRegistry.cpp
+    core/src/tools/openAppTool.cpp
+    core/src/tools/reminderTool.cpp
+    core/src/tools/shutdownTool.cpp
+    core/src/tools/taskScheduler.cpp
 )
 
 # ---------------- Executable ----------------

@@ -1,3 +1,8 @@
+#include "tools/toolRegistry.h"
+#include "tools/openAppTool.h"
+#include "tools/shutdownTool.h"
+#include "tools/reminderTool.h"
+
 #include <iostream>
 #include "speech/audioInput.h"
 #include "speech/whisperSTT.h"
@@ -29,7 +34,15 @@ int main() {
         "../../models/whisper/ggml-small.en.bin"
     );
 
+    
+    
     std::system("cls");
+
+    ToolRegistry registry;
+
+    registry.registerTool(std::make_unique<OpenAppTool>());
+    registry.registerTool(std::make_unique<ShutdownTool>());
+    registry.registerTool(std::make_unique<ReminderTool>());
 
     MemoryManager memory("../../core/data");
     memory.load();
@@ -57,6 +70,23 @@ int main() {
         if (input == "exit" || input == "quit" ||
             input == "exit program" || input == "stop") {
             break;
+        }
+
+        if (input.rfind("open ", 0) == 0) {
+            std::string app = input.substr(5);
+            std::cout << registry.runTool("open_app", app) << "\n";
+            continue;
+        }
+
+        if (input.rfind("remind ", 0) == 0) {
+            std::string reminder = input.substr(7);
+            std::cout << registry.runTool("create_reminder", reminder) << "\n";
+            continue;
+        }
+
+        if (input == "shutdown") {
+            std::cout << registry.runTool("shutdown_pc", "") << "\n";
+            continue;
         }
 
         //Build Prompt
