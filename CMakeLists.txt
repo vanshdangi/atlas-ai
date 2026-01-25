@@ -35,6 +35,7 @@ set(ATLAS_SOURCES
     core/src/speech/piperTTS.cpp
 
     # Tools
+    core/src/tools/toolManager.cpp
     core/src/tools/toolRegistry.cpp
     core/src/tools/openAppTool.cpp
     core/src/tools/reminderTool.cpp

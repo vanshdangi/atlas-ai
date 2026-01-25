@@ -2,6 +2,8 @@
 #include "tools/openAppTool.h"
 #include "tools/shutdownTool.h"
 #include "tools/reminderTool.h"
+#include "tools/toolManager.h"
+
 
 #include <iostream>
 #include "speech/audioInput.h"
@@ -41,9 +43,8 @@ int main() {
 
     ToolRegistry registry;
 
-    registry.registerTool(std::make_unique<OpenAppTool>());
-    registry.registerTool(std::make_unique<ShutdownTool>());
-    registry.registerTool(std::make_unique<ReminderTool>());
+    ToolManager toolManager;
+    toolManager.registerAllTools(registry);
 
     MemoryManager memory("../../core/data");
     memory.load();
@@ -81,13 +82,16 @@ int main() {
                 memory.conversation
             );
 
-        // Print Output
-        print_divider();
-        std::cout << "Atlas:\n";
-
         // Generate Output
         std::string output = llama.generate_from_prompt(prompt, 1024);
-        std::cout << output << "\n";
+
+        if (toolManager.isToolCall(output)){
+            std::string toolResult = toolManager.executeToolCall(output, registry);
+            std::cout << "\nTool Result:\n" << toolResult << "\n";
+        }
+        else {
+            std::cout << "\nAtlas: " << output   << "\n";
+        }
 
         // Save Output
         memory.conversation.add_assistant(output);
