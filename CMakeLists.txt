@@ -60,6 +60,7 @@ target_link_libraries(atlas_ai
         llama
         whisper
         winmm
+        advapi32
         nlohmann_json::nlohmann_json
 )
 
@@ -67,3 +68,8 @@ target_compile_definitions(atlas_ai PRIVATE
     GGML_LOG_LEVEL=GGML_LOG_LEVEL_ERROR
     LLAMA_LOG_DISABLE
 )
+
+if (WIN32)
+    set(CMAKE_C_STANDARD_LIBRARIES "")
+    set(CMAKE_CXX_STANDARD_LIBRARIES "")
+endif()
