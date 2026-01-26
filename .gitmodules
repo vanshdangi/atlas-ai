@@ -4,6 +4,3 @@
 [submodule "external/whisper.cpp"]
 	path = external/whisper.cpp
 	url = https://github.com/ggerganov/whisper.cpp
-[submodule "external/llama.cpp"]
-	path = external/llama.cpp
-	url = https://github.com/ggml-org/llama.cpp
