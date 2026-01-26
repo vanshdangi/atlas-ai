@@ -14,7 +14,7 @@ static std::string current_time() {
     return std::string(buf);
 }
 
-std::string ReminderTool::run(const std::string& input) {
+std::string ReminderTool::run(const json& args) {
 
     const std::string filename = "..\\..\\core\\data\\tools\\savedTasks.json";
 
@@ -41,7 +41,7 @@ std::string ReminderTool::run(const std::string& input) {
 
     // Add new reminder object
     json reminder;
-    reminder["task"] = input;
+    reminder["task"] = args["text"];
     reminder["created_at"] = current_time();
 
     data["reminders"].push_back(reminder);
@@ -51,5 +51,5 @@ std::string ReminderTool::run(const std::string& input) {
     outFile << data.dump(4); // pretty print with indent
     outFile.close();
 
-    return "✅ Reminder saved: " + input;
+    return "✅ Reminder saved: " + args["text"];
 }

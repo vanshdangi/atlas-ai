@@ -1,5 +1,7 @@
 #pragma once
 #include "tools/tool.h"
+#include "nlohmann/json.hpp"
+using json = nlohmann::json;
 
 class OpenAppTool : public Tool {
 public:
@@ -11,5 +13,5 @@ public:
         return "Opens an application like chrome, spotify, vscode.";
     }
 
-    std::string run(const std::string& input) override;
+    std::string run(const json& args) override;
 };

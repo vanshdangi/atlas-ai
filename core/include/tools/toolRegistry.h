@@ -4,6 +4,9 @@
 #include <string>
 #include "tools/tool.h"
 
+#include "nlohmann/json.hpp"
+using json = nlohmann::json;
+
 class ToolRegistry {
 private:
     std::unordered_map<std::string, std::unique_ptr<Tool>> tools;
@@ -13,7 +16,7 @@ public:
 
     bool hasTool(const std::string& name);
 
-    std::string runTool(const std::string& name, const std::string& input);
+    std::string runTool(const std::string& name, const json& args);
 
     std::string listTools();
 };

@@ -1,6 +1,9 @@
 #pragma once
 #include <string>
 
+#include "nlohmann/json.hpp"
+using json = nlohmann::json;
+
 class Tool {
 public:
     virtual ~Tool() {}
@@ -9,5 +12,5 @@ public:
 
     virtual std::string description() const = 0;
 
-    virtual std::string run(const std::string& input) = 0;
+    virtual std::string run(const json& args) = 0;
 };

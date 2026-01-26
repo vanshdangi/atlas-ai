@@ -1,6 +1,9 @@
 #pragma once
 #include "tools/tool.h"
 
+#include "nlohmann/json.hpp"
+using json = nlohmann::json;
+
 class ShutdownTool : public Tool {
 public:
     std::string name() const override {
@@ -11,5 +14,5 @@ public:
         return "Shuts down the computer safely.";
     }
 
-    std::string run(const std::string& input) override;
+    std::string run(const json& args) override;
 };

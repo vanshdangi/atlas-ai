@@ -61,6 +61,7 @@ target_link_libraries(atlas_ai
         whisper
         winmm
         advapi32
+        shell32
         nlohmann_json::nlohmann_json
 )
 

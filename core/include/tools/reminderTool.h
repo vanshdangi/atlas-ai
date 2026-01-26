@@ -1,6 +1,9 @@
 #pragma once
 #include "tools/tool.h"
 
+#include "nlohmann/json.hpp"
+using json = nlohmann::json;
+
 class ReminderTool : public Tool {
 public:
     std::string name() const override {
@@ -11,5 +14,5 @@ public:
         return "Creates a reminder and saves it into tasks.json.";
     }
 
-    std::string run(const std::string& input) override;
+    std::string run(const json& args) override;
 };

@@ -23,15 +23,20 @@ std::string ToolManager::executeToolCall(
 
         // Tool name
         if (!call.contains("tool")) {
-            return "Tool call JSON missing 'tool' field.";
+            return "Tool call missing 'tool'.";
         }
 
-        std::string tool = call["tool"].get<std::string>();
+        std::string tool = call["tool"];
 
-        // Args
-        std::string args = "";
+        json args = json::object();
+
         if (call.contains("args")) {
-            args = call["args"].get<std::string>();
+            if (call["args"].is_string()) {
+                args["input"] = call["args"];
+            }
+            else {
+                args = call["args"];
+            }
         }
         
         if (tool == "list_tools") {
