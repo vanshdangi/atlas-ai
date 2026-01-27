@@ -4,6 +4,7 @@
 #include "tools/openAppTool.h"
 #include "tools/shutdownTool.h"
 #include "tools/reminderTool.h"
+#include "tools/openWebsiteTool.h"
 
 class ToolManager {
 public:

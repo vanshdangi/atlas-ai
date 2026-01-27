@@ -8,6 +8,7 @@ void ToolManager::registerAllTools(ToolRegistry& registry){
     registry.registerTool(std::make_unique<OpenAppTool>());
     registry.registerTool(std::make_unique<ShutdownTool>());
     registry.registerTool(std::make_unique<ReminderTool>());
+    registry.registerTool(std::make_unique<OpenWebsiteTool>());
 }
 
 bool ToolManager::isToolCall(const std::string& text) {

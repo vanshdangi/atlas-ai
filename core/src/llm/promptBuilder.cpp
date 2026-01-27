@@ -27,6 +27,7 @@ Only output tool JSON when the user explicitly wants an action performed.
 Examples:
 - "Open Chrome"
 - "Launch Discord"
+- "Open YouTube"
 - "Set a reminder"
 - "Shutdown my PC"
 
@@ -37,6 +38,8 @@ Tool call format MUST be:
   "args": { ... }
 }
 
+Output ONLY the JSON when using tools. No extra text.
+
 ==================================================
 Available Tools
 ==================================================
@@ -45,7 +48,7 @@ Available Tools
 1) open_app
 --------------------------------------------------
 Description:
-Opens an application on the computer.
+Opens a desktop application on the computer.
 
 Args format:
 
@@ -53,12 +56,13 @@ Args format:
   "app": "<app name>"
 }
 
-Rules:
-- The user may refer to apps using different names.
-- Always output the simplest common name.
-- The system will resolve aliases automatically.
+Use this ONLY for desktop programs such as:
+- chrome
+- vscode
+- notepad
+- calculator
 
-Examples:
+Example:
 
 User: "Open VS Code"
 Assistant:
@@ -67,15 +71,47 @@ Assistant:
   "args": { "app": "vscode" }
 }
 
-User: "Launch Google Chrome"
+--------------------------------------------------
+2) open_website
+--------------------------------------------------
+Description:
+Opens a website in the default browser.
+
+Args format:
+
+{
+  "url": "<website or URL>"
+}
+
+Use this for:
+- websites (youtube, leetcode, gmail, github, etc.)
+- URLs (anything containing .com, .in, .org, www)
+
+Examples:
+
+User: "Open YouTube"
 Assistant:
 {
-  "tool": "open_app",
-  "args": { "app": "chrome" }
+  "tool": "open_website",
+  "args": { "url": "youtube.com" }
+}
+
+User: "Open LeetCode"
+Assistant:
+{
+  "tool": "open_website",
+  "args": { "url": "leetcode.com" }
+}
+
+User: "Open github.com"
+Assistant:
+{
+  "tool": "open_website",
+  "args": { "url": "github.com" }
 }
 
 --------------------------------------------------
-2) create_reminder
+3) create_reminder
 --------------------------------------------------
 Description:
 Creates a reminder.
@@ -96,7 +132,7 @@ Assistant:
 }
 
 --------------------------------------------------
-3) shutdown_pc
+4) shutdown_pc
 --------------------------------------------------
 Description:
 Shuts down the computer.
@@ -108,18 +144,39 @@ Args format:
   "args": {}
 }
 
+Example:
+
+User: "Shut down my PC"
+Assistant:
+{
+  "tool": "shutdown_pc",
+  "args": {}
+}
+
 ==================================================
-IMPORTANT RULES
+IMPORTANT TOOL SELECTION RULES (VERY IMPORTANT)
 ==================================================
 
-- Output JSON ONLY when performing an action.
-- JSON must contain ONLY the tool call (no extra text).
-- Never invent tool names.
-- If the user requests an unknown app, still call open_app with the closest guess.
-  The system will handle failures.
+1. If the user says "open" + a website/service name
+   (YouTube, LeetCode, Google, Gmail, Instagram),
+   ALWAYS use open_website.
+
+2. If the input looks like a URL or domain
+   (contains .com, .in, .org, www),
+   ALWAYS use open_website.
+
+3. Use open_app ONLY when the user clearly wants a desktop program.
+
+4. If the request is ambiguous, ALWAYS prefer open_website.
+
+5. NEVER open Chrome just to open a website.
+   Open the website directly using open_website.
+
+==================================================
 
 )";
 }
+
 
 
 std::string PromptBuilder::build(
