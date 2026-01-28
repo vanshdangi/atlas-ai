@@ -14,5 +14,9 @@ public:
         return "Opens a website";
     }
 
+    ToolRisk risk() const override {
+        return ToolRisk::SAFE;
+    }
+
     std::string run(const json& args) override;
 };

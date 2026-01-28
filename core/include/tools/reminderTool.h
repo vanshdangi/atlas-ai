@@ -14,5 +14,9 @@ public:
         return "Creates a reminder and saves it into tasks.json.";
     }
 
+    ToolRisk risk() const override {
+        return ToolRisk::SAFE;
+    }
+
     std::string run(const json& args) override;
 };

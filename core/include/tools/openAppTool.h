@@ -13,5 +13,9 @@ public:
         return "Opens an application like chrome, spotify, vscode.";
     }
 
+    ToolRisk risk() const override {
+        return ToolRisk::SAFE;
+    }
+
     std::string run(const json& args) override;
 };

@@ -14,5 +14,9 @@ public:
         return "Shuts down the computer safely.";
     }
 
+    ToolRisk risk() const override {
+        return ToolRisk::CRITICAL;
+    }
+
     std::string run(const json& args) override;
 };
