@@ -8,7 +8,10 @@
 
 class ToolManager {
 public:
-    static void registerAllTools(ToolRegistry& registry);
+    static void ToolManager::registerAllTools(
+        ToolRegistry& registry,
+        TaskScheduler& scheduler
+    );
     static bool isToolCall(const std::string& text);
     static std::string executeToolCall(const std::string& jsonText, ToolRegistry& registry);
 };

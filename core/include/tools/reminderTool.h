@@ -1,11 +1,12 @@
 #pragma once
 #include "tools/tool.h"
-
-#include "nlohmann/json.hpp"
-using json = nlohmann::json;
+#include "tools/scheduledTask.h"
+#include "scheduler/taskScheduler.h"
 
 class ReminderTool : public Tool {
 public:
+    ReminderTool(TaskScheduler& scheduler);
+    
     std::string name() const override {
         return "create_reminder";
     }
@@ -19,4 +20,7 @@ public:
     }
 
     std::string run(const json& args) override;
+
+private:
+    TaskScheduler& scheduler;
 };

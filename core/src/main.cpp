@@ -13,6 +13,7 @@
 #include "llm/promptBuilder.h"
 #include "utils/utils.h"
 #include "memory/memoryManager.h"
+#include "scheduler/taskScheduler.h"
 #include <windows.h>
 #include <mmsystem.h>
 #pragma comment(lib, "winmm.lib")
@@ -36,18 +37,19 @@ int main() {
     WhisperSTT whisper(
         "../../models/whisper/ggml-small.en.bin"
     );
-
-    
     
     std::system("cls");
 
-    ToolRegistry registry;
+    TaskScheduler scheduler("../../core/data/tools/savedTasks.json");
+    scheduler.start();
 
+    ToolRegistry registry;
     ToolManager toolManager;
-    toolManager.registerAllTools(registry);
+    toolManager.registerAllTools(registry, scheduler);
 
     MemoryManager memory("../../core/data");
     memory.load();
+
 
     while (true) {
         /* Voice Input
@@ -88,6 +90,7 @@ int main() {
         if (toolManager.isToolCall(output)){
             std::string toolResult = toolManager.executeToolCall(output, registry);
             std::cout << "\nTool Result:\n" << toolResult << "\n";
+            std::cout << "\nAtlas: " << output   << "\n";
         }
         else {
             std::cout << "\nAtlas: " << output   << "\n";
@@ -107,5 +110,6 @@ int main() {
         std::cout << "\n";
     }
 
+    scheduler.stop();
     return 0;
 }

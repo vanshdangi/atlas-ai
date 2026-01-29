@@ -4,10 +4,13 @@
 #include "nlohmann/json.hpp"
 using json = nlohmann::json;
 
-void ToolManager::registerAllTools(ToolRegistry& registry){
+void ToolManager::registerAllTools(
+    ToolRegistry& registry,
+    TaskScheduler& scheduler
+){
     registry.registerTool(std::make_unique<OpenAppTool>());
     registry.registerTool(std::make_unique<ShutdownTool>());
-    registry.registerTool(std::make_unique<ReminderTool>());
+    registry.registerTool(std::make_unique<ReminderTool>(scheduler));
     registry.registerTool(std::make_unique<OpenWebsiteTool>());
 }
 
