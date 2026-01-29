@@ -40,8 +40,10 @@ set(ATLAS_SOURCES
     core/src/tools/openAppTool.cpp
     core/src/tools/reminderTool.cpp
     core/src/tools/shutdownTool.cpp
-    core/src/tools/taskScheduler.cpp
     core/src/tools/openWebsiteTool.cpp
+
+    # Scheduler
+    core/src/scheduler/taskScheduler.cpp
 )
 
 # ---------------- Executable ----------------
