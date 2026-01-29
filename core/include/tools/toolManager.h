@@ -6,9 +6,11 @@
 #include "tools/reminderTool.h"
 #include "tools/openWebsiteTool.h"
 
+class TaskScheduler;  // Forward declaration
+
 class ToolManager {
 public:
-    static void ToolManager::registerAllTools(
+    static void registerAllTools(
         ToolRegistry& registry,
         TaskScheduler& scheduler
     );

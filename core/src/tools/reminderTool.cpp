@@ -59,43 +59,58 @@ ReminderTool::ReminderTool(TaskScheduler& scheduler)
     : scheduler(scheduler) {}
 
 std::string ReminderTool::run(const json& args) {
+
     if (!args.contains("text")) {
-        return "Reminder failed: Missing reminder text.";
+        return "Reminder failed: Missing text.";
     }
+
     std::string message = args["text"];
 
-    long long due_time = now_unix() + 60; // default
+    // ---------------- Time parsing ----------------
+    long long due_time = now_unix() + 60; // default 1 min
 
     if (args.contains("time")) {
-        std::string timeStr = args["time"];
-        long long parsed = parse_datetime_to_unix(timeStr);
-        if (parsed == -1) {
+        long long parsed = parse_datetime_to_unix(args["time"]);
+        if (parsed == -1)
             return "Reminder failed: Invalid time format.";
-        }
+
         due_time = parsed;
     }
     else if (args.contains("delay_minutes")) {
-        due_time =  now_unix() + args["delay_minutes"].get<int>() * 60;
+        due_time = now_unix() + args["delay_minutes"].get<int>() * 60;
     }
     else if (args.contains("delay_seconds")) {
         due_time = now_unix() + args["delay_seconds"].get<int>();
     }
 
-    
+    // ---------------- ScheduledTask ----------------
     ScheduledTask task;
     task.id = "task_" + std::to_string(std::rand());
-    task.type = "reminder";
-    task.message = message;
     task.dueTime = due_time;
     task.completed = false;
-    
+
+    // ✅ Case 1: Tool scheduling
+    if (args.contains("tool_call")) {
+
+        task.type = "tool";
+        task.toolCall = args["tool_call"];   // store full JSON
+        task.message = "Scheduled tool action: " + message;
+    }
+
+    // ✅ Case 2: Normal reminder
+    else {
+
+        task.type = "reminder";
+        task.message = message;
+    }
+
     scheduler.addTask(task);
 
-    long long now = now_unix();
-    long long diff = task.dueTime - now;
+    // ---------------- Response ----------------
+    long long diff = task.dueTime - now_unix();
 
-    return "Reminder set for " +
-        unix_to_datetime(task.dueTime) +
-        " (" + seconds_to_human(diff) + " from now): " +
-        message;
+    return "✅ Task scheduled for " +
+            unix_to_datetime(task.dueTime) +
+            " (" + seconds_to_human(diff) + " from now): " +
+            message;
 }

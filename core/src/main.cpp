@@ -39,12 +39,13 @@ int main() {
     );
     
     std::system("cls");
-
-    TaskScheduler scheduler("../../core/data/tools/savedTasks.json");
-    scheduler.start();
-
+    
     ToolRegistry registry;
     ToolManager toolManager;
+
+    TaskScheduler scheduler("../../core/data/tools/savedTasks.json", toolManager, registry);
+    scheduler.start();
+
     toolManager.registerAllTools(registry, scheduler);
 
     MemoryManager memory("../../core/data");

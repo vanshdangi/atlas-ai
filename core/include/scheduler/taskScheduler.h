@@ -4,9 +4,12 @@
 #include <atomic>
 #include "tools/scheduledTask.h"
 
+class ToolManager;  // Forward declaration
+class ToolRegistry;  // Forward declaration
+
 class TaskScheduler {
 public:
-    TaskScheduler(const std::string& file);
+    TaskScheduler(const std::string& file, ToolManager& toolManager, ToolRegistry& toolRegistry);
 
     void start();
     void stop();
@@ -16,6 +19,7 @@ public:
 private:
     void runLoop();
     void checkDueTasks();
+    void executeTask(ScheduledTask& task);
 
     void loadTasks();
     void saveTasks();
@@ -26,4 +30,7 @@ private:
 
     std::thread worker;
     std::atomic<bool> running;
+
+    ToolManager& toolManager;
+    ToolRegistry& toolRegistry;
 };

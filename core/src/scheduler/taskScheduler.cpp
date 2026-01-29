@@ -1,4 +1,6 @@
 #include "scheduler/taskScheduler.h"
+#include "tools/toolManager.h"
+#include "tools/toolRegistry.h"
 #include <iostream>
 #include <fstream>
 #include <chrono>
@@ -7,8 +9,8 @@
 
 using json = nlohmann::json;
 
-TaskScheduler::TaskScheduler(const std::string& file)
-    : storageFile(file), running(false) {
+TaskScheduler::TaskScheduler(const std::string& file, ToolManager& toolManager, ToolRegistry& toolRegistry)
+    : storageFile(file), toolManager(toolManager), toolRegistry(toolRegistry), running(false) {
     loadTasks();
 }
 
@@ -35,16 +37,32 @@ void TaskScheduler::runLoop() {
 }
 
 void TaskScheduler::checkDueTasks() {
-    long long now = std::time(nullptr);
+    while (running) {
 
-    for (auto& task : tasks) {
-        if (!task.completed && now >= task.dueTime) {
+        long long now = std::time(nullptr);
 
-            std::cout << "\n Reminder: " << task.message << "\n";
-
-            task.completed = true;
-            saveTasks();
+        for (auto& task : tasks) {
+            if (!task.completed && task.dueTime <= now) {
+                executeTask(task);
+                task.completed = true;
+            }
         }
+
+        std::this_thread::sleep_for(std::chrono::seconds(1));
+    }
+}
+
+void TaskScheduler::executeTask(ScheduledTask& task) {
+
+    if (task.type == "reminder") {
+        std::cout << "\nREMINDER: " << task.message << "\n";
+    }
+
+    else if (task.type == "tool") {
+        std::cout << "\nExecuting scheduled tool...\n";
+
+        std::string jsonText = task.toolCall.dump();
+        toolManager.executeToolCall(jsonText, toolRegistry);
     }
 }
 
@@ -103,6 +121,7 @@ void TaskScheduler::saveTasks() {
         t["id"] = task.id;
         t["type"] = task.type;
         t["message"] = task.message;
+        t["tool_call"] = task.toolCall;
         t["dueTime"] = task.dueTime;
         t["completed"] = task.completed;
 
