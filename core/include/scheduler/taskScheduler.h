@@ -3,6 +3,7 @@
 #include <thread>
 #include <atomic>
 #include "tools/scheduledTask.h"
+#include "speech/piperTTS.h"
 
 class ToolManager;  // Forward declaration
 class ToolRegistry;  // Forward declaration
@@ -33,4 +34,5 @@ private:
 
     ToolManager& toolManager;
     ToolRegistry& toolRegistry;
+    PiperTTS& piper;
 };
