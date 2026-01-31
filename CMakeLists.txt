@@ -14,6 +14,7 @@ set(GGML_CUDA ON CACHE BOOL "" FORCE)
 add_subdirectory(external/llama.cpp)
 add_subdirectory(external/whisper.cpp)
 add_subdirectory(external/json)
+add_subdirectory(external/webrtcvad)
 
 # ---------------- Sources ----------------
 set(ATLAS_SOURCES
@@ -55,6 +56,7 @@ add_executable(atlas_ai
 target_include_directories(atlas_ai
     PRIVATE
         core/include
+        external/webrtcvad/include
 )
 
 # ---------------- Linking ----------------
@@ -65,6 +67,7 @@ target_link_libraries(atlas_ai
         winmm
         advapi32
         shell32
+        fvad
         nlohmann_json::nlohmann_json
 )
 

@@ -64,6 +64,7 @@ void TaskScheduler::executeTask(ScheduledTask& task) {
         std::string jsonText = task.toolCall.dump();
         toolManager.executeToolCall(jsonText, toolRegistry);
     }
+    std::cout << "\nYou: ";
 }
 
 void TaskScheduler::addTask(const ScheduledTask& task) {

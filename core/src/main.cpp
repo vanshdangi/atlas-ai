@@ -18,17 +18,6 @@
 #include <mmsystem.h>
 #pragma comment(lib, "winmm.lib")
 
-static void print_divider(char ch = '-', int width = 54) {
-    for (int i = 0; i < width; ++i) std::cout << ch;
-    std::cout << "\n";
-}
-
-static void print_section(const std::string& title) {
-    print_divider('=');
-    std::cout << title << "\n";
-    print_divider('=');
-}
-
 int main() {
     LlamaEngine llama(
         "../../models/llama/Meta-Llama-3.1-8B-instruct-Q4_K_M.gguf"
@@ -51,25 +40,27 @@ int main() {
     MemoryManager memory("../../core/data");
     memory.load();
 
-
+    VadListener vadListener;
     while (true) {
-        /* Voice Input
-        print_section("🎤 Listening...");
 
+        
         // Record Input
-        auto audio = record_audio(5);
+        auto audio = vadListener.listen_for_command();
         std::string input = whisper.transcribe(audio);
         trim_and_normalize(input);
+        
         memory.conversation.add_user(input);
-
+        
         // Print Input
-        std::cout << "\nYou  : " << input << "\n\n";
-        */
+        std::cout << "\nYou: ";
+        std::cout << input << "\n\n";
 
+        /* Text Input (for testing)
         std::string input;
         std::cout << "\nYou  :  ";
         std::getline(std::cin, input);
         std::cout << "\n";
+        */
 
         // Exit Commands
         if (input == "exit" || input == "quit" ||
@@ -92,9 +83,15 @@ int main() {
             std::string toolResult = toolManager.executeToolCall(output, registry);
             std::cout << "\nTool Result:\n" << toolResult << "\n";
             std::cout << "\nAtlas: " << output   << "\n";
+            //Voice Output
+            //generate_audio_file(toolResult);
+            //play_audio_file();
         }
         else {
             std::cout << "\nAtlas: " << output   << "\n";
+            //Voice Output
+            //generate_audio_file(output);
+            //play_audio_file();
         }
 
         // Save Output
@@ -102,13 +99,7 @@ int main() {
         memory.conversation.trim();
         memory.save();
 
-        /* Voice Output
-        generate_audio_file(output);
-        play_audio_file();
-        */
-
-        print_divider();
-        std::cout << "\n";
+        std::cout << "--------------------------------------------------\n";
     }
 
     scheduler.stop();
