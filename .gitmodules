@@ -7,3 +7,6 @@
 [submodule "external/llama.cpp"]
 	path = external/llama.cpp
 	url = https://github.com/Gr8V/llama.cpp
+[submodule "external/webrtcvad"]
+	path = external/webrtcvad
+	url = https://github.com/dpirch/libfvad
