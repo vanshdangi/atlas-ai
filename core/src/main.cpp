@@ -26,13 +26,15 @@ int main() {
     WhisperSTT whisper(
         "../../models/whisper/ggml-small.en.bin"
     );
+
+    PiperTTS piper;
     
     std::system("cls");
     
     ToolRegistry registry;
     ToolManager toolManager;
 
-    TaskScheduler scheduler("../../core/data/tools/savedTasks.json", toolManager, registry);
+    TaskScheduler scheduler("../../core/data/tools/savedTasks.json", toolManager, registry, piper);
     scheduler.start();
 
     toolManager.registerAllTools(registry, scheduler);
@@ -46,6 +48,7 @@ int main() {
         
         // Record Input
         auto audio = vadListener.listen_for_command();
+        piper.interrupt();
         std::string input = whisper.transcribe(audio);
         trim_and_normalize(input);
         
@@ -84,14 +87,12 @@ int main() {
             std::cout << "\nTool Result:\n" << toolResult << "\n";
             std::cout << "\nAtlas: " << output   << "\n";
             //Voice Output
-            //generate_audio_file(toolResult);
-            //play_audio_file();
+            piper.speakAsync(toolResult);
         }
         else {
             std::cout << "\nAtlas: " << output   << "\n";
             //Voice Output
-            //generate_audio_file(output);
-            //play_audio_file();
+            piper.speakAsync(output);
         }
 
         // Save Output

@@ -9,8 +9,8 @@
 
 using json = nlohmann::json;
 
-TaskScheduler::TaskScheduler(const std::string& file, ToolManager& toolManager, ToolRegistry& toolRegistry)
-    : storageFile(file), toolManager(toolManager), toolRegistry(toolRegistry), running(false) {
+TaskScheduler::TaskScheduler(const std::string& file, ToolManager& toolManager, ToolRegistry& toolRegistry, PiperTTS& piper)
+    : storageFile(file), toolManager(toolManager), toolRegistry(toolRegistry), piper(piper), running(false) {
     loadTasks();
 }
 
@@ -56,10 +56,12 @@ void TaskScheduler::executeTask(ScheduledTask& task) {
 
     if (task.type == "reminder") {
         std::cout << "\nREMINDER: " << task.message << "\n";
+        piper.speakAsync(task.message);
     }
 
     else if (task.type == "tool") {
         std::cout << "\nExecuting scheduled tool...\n";
+        piper.speakAsync("Executing scheduled tool.");
 
         std::string jsonText = task.toolCall.dump();
         toolManager.executeToolCall(jsonText, toolRegistry);

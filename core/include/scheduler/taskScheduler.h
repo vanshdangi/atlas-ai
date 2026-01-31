@@ -9,7 +9,7 @@ class ToolRegistry;  // Forward declaration
 
 class TaskScheduler {
 public:
-    TaskScheduler(const std::string& file, ToolManager& toolManager, ToolRegistry& toolRegistry);
+    TaskScheduler(const std::string& file, ToolManager& toolManager, ToolRegistry& toolRegistry, PiperTTS& piper);
 
     void start();
     void stop();

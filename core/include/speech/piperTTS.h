@@ -1,5 +1,20 @@
 #pragma once
-#include <iostream>
+#include <string>
+#include <thread>
+#include <atomic>
 
-void generate_audio_file(const std::string& output);
-void play_audio_file();
+class PiperTTS {
+public:
+    PiperTTS();
+
+    void speakAsync(const std::string& text);
+    void interrupt();
+
+private:
+    void generateThread(std::string text);
+
+    std::thread worker;
+    std::atomic<bool> busy;
+
+    std::string wavPath;
+};

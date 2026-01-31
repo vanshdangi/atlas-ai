@@ -39,7 +39,7 @@ std::string ToolRegistry::runTool(const std::string& name, const json& args) {
     }
 
     if (risk == ToolRisk::CRITICAL) {
-        std::cout << "\n🚨 CRITICAL TOOL REQUESTED: " << name << "\n";
+        std::cout << "\nCRITICAL TOOL REQUESTED: " << name << "\n";
         std::cout << "This may shut down your PC or delete files.\n";
         std::cout << "Type YES to confirm: ";
 

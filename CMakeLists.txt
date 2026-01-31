@@ -34,6 +34,7 @@ set(ATLAS_SOURCES
     core/src/speech/audioInput.cpp
     core/src/speech/whisperSTT.cpp
     core/src/speech/piperTTS.cpp
+    core/src/speech/playTTS.cpp
 
     # Tools
     core/src/tools/toolManager.cpp

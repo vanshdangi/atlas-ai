@@ -109,7 +109,8 @@ std::string ReminderTool::run(const json& args) {
     // ---------------- Response ----------------
     long long diff = task.dueTime - now_unix();
 
-    return "✅ Task scheduled for " +
+    // return a pair of strings one for text output and one for voice output
+    return "Task scheduled for " +
             unix_to_datetime(task.dueTime) +
             " (" + seconds_to_human(diff) + " from now): " +
             message;
