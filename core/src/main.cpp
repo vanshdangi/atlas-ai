@@ -14,6 +14,7 @@
 #include "utils/utils.h"
 #include "memory/memoryManager.h"
 #include "scheduler/taskScheduler.h"
+#include "autonomy/autonomousSystem.h"
 #include <windows.h>
 #include <mmsystem.h>
 #pragma comment(lib, "winmm.lib")
@@ -41,6 +42,9 @@ int main() {
 
     MemoryManager memory("../../core/data");
     memory.load();
+
+    AutonomousSystem autonomousSystem(scheduler);
+    autonomousSystem.start();
 
     VadListener vadListener;
     while (true) {

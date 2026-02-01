@@ -36,6 +36,13 @@ set(ATLAS_SOURCES
     core/src/speech/piperTTS.cpp
     core/src/speech/playTTS.cpp
 
+    # Autonomy
+    core/src/autonomy/autonomousSystem.cpp
+    core/src/autonomy/autonomousTaskFactory.cpp
+    core/src/autonomy/triggerManager.cpp
+    core/src/autonomy/triggers/idleTrigger.cpp
+    core/src/autonomy/triggers/batteryTrigger.cpp
+
     # Tools
     core/src/tools/toolManager.cpp
     core/src/tools/toolRegistry.cpp
@@ -66,6 +73,7 @@ target_link_libraries(atlas_ai
         llama
         whisper
         winmm
+        user32
         advapi32
         shell32
         fvad
