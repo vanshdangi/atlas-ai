@@ -11,7 +11,7 @@ AutonomousSystem::AutonomousSystem(TaskScheduler& sched)
     : scheduler(sched)
 {
     // Add triggers here
-    triggers.addTrigger(std::make_unique<IdleTrigger>(6));
+    triggers.addTrigger(std::make_unique<IdleTrigger>(60));
     triggers.addTrigger(std::make_unique<BatteryTrigger>());
 }
 

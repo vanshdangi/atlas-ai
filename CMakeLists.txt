@@ -53,6 +53,12 @@ set(ATLAS_SOURCES
 
     # Scheduler
     core/src/scheduler/taskScheduler.cpp
+
+    # Agent
+    core/src/agent/planner.cpp
+    core/src/agent/executor.cpp
+    core/src/agent/reflector.cpp
+    core/src/agent/agentCore.cpp
 )
 
 # ---------------- Executable ----------------

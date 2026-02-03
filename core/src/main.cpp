@@ -3,7 +3,7 @@
 #include "tools/shutdownTool.h"
 #include "tools/reminderTool.h"
 #include "tools/toolManager.h"
-
+#include "agent/agentCore.h"
 
 #include <iostream>
 #include "speech/audioInput.h"
@@ -75,29 +75,12 @@ int main() {
             break;
         }
 
-        //Build Prompt
-        std::string prompt =
-            PromptBuilder::build(
-                input,
-                memory.facts,
-                memory.conversation
-            );
+        // Agent: plan -> execute -> reflect -> reply
+        agent::AgentCore agent;
+        std::string output = agent.handle(input, llama, registry, memory);
 
-        // Generate Output
-        std::string output = llama.generate_from_prompt(prompt, 1024);
-
-        if (toolManager.isToolCall(output)){
-            std::string toolResult = toolManager.executeToolCall(output, registry);
-            std::cout << "\nTool Result:\n" << toolResult << "\n";
-            std::cout << "\nAtlas: " << output   << "\n";
-            //Voice Output
-            piper.speakAsync(toolResult);
-        }
-        else {
-            std::cout << "\nAtlas: " << output   << "\n";
-            //Voice Output
-            piper.speakAsync(output);
-        }
+        std::cout << "\nAtlas: " << output << "\n";
+        piper.speakAsync(output);
 
         // Save Output
         memory.conversation.add_assistant(output);
