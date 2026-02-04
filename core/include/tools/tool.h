@@ -2,6 +2,7 @@
 #include <string>
 
 #include "nlohmann/json.hpp"
+#include "agent/types.h"
 using json = nlohmann::json;
 
 enum class ToolRisk {
@@ -22,5 +23,5 @@ public:
 
     virtual std::vector<std::string> requiredArgs() const = 0;
 
-    virtual std::string run(const json& args) = 0;
+    virtual agent::ToolResult run(const json& args) = 0;
 };

@@ -3,6 +3,7 @@
 #include <memory>
 #include <string>
 #include "tools/tool.h"
+#include "agent/types.h"
 
 #include "nlohmann/json.hpp"
 using json = nlohmann::json;
@@ -22,7 +23,7 @@ public:
     );
 
 
-    std::string runTool(const std::string& name, const json& args);
+    agent::ToolResult runTool(const std::string& name, const json& args);
 
     std::string listTools();
 };

@@ -1,5 +1,6 @@
 #pragma once
 #include "tools/tool.h"
+#include "agent/types.h"
 
 #include "nlohmann/json.hpp"
 using json = nlohmann::json;
@@ -17,10 +18,10 @@ public:
     ToolRisk risk() const override {
         return ToolRisk::CRITICAL;
     }
-    
+
     std::vector<std::string> requiredArgs() const override {
         return {};
     }
 
-    std::string run(const json& args) override;
+    agent::ToolResult run(const json& args) override;
 };

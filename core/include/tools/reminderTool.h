@@ -1,6 +1,7 @@
 #pragma once
 #include "tools/tool.h"
 #include "tools/scheduledTask.h"
+#include "agent/types.h"
 #include "scheduler/taskScheduler.h"
 
 class ReminderTool : public Tool {
@@ -23,7 +24,7 @@ public:
         return {"text"};
     }
 
-    std::string run(const json& args) override;
+    agent::ToolResult run(const json& args) override;
 
 private:
     TaskScheduler& scheduler;

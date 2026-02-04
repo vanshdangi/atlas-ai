@@ -58,10 +58,13 @@ static std::string seconds_to_human(long long seconds) {
 ReminderTool::ReminderTool(TaskScheduler& scheduler)
     : scheduler(scheduler) {}
 
-std::string ReminderTool::run(const json& args) {
+agent::ToolResult ReminderTool::run(const json& args) {
 
     if (!args.contains("text")) {
-        return "Reminder failed: Missing text.";
+        agent::ToolResult result;
+        result.output = "Reminder failed: Missing text.";
+        result.success = false;
+        return result;
     }
 
     std::string message = args["text"];
@@ -71,8 +74,12 @@ std::string ReminderTool::run(const json& args) {
 
     if (args.contains("time")) {
         long long parsed = parse_datetime_to_unix(args["time"]);
-        if (parsed == -1)
-            return "Reminder failed: Invalid time format.";
+        if (parsed == -1) {
+            agent::ToolResult result;
+            result.output = "Reminder failed: Invalid time format.";
+            result.success = false;
+            return result;
+        }
 
         due_time = parsed;
     }
@@ -109,9 +116,11 @@ std::string ReminderTool::run(const json& args) {
     // ---------------- Response ----------------
     long long diff = task.dueTime - now_unix();
 
-    // return a pair of strings one for text output and one for voice output
-    return "Task scheduled for " +
+    agent::ToolResult result;
+    result.output = "Task scheduled for " +
             unix_to_datetime(task.dueTime) +
             " (" + seconds_to_human(diff) + " from now): " +
             message;
+    result.success = true;
+    return result;
 }

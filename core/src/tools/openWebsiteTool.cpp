@@ -2,11 +2,14 @@
 #include <windows.h>
 #include <string>
 
-std::string OpenWebsiteTool::run(const json& args) {
+agent::ToolResult OpenWebsiteTool::run(const json& args) {
 #ifdef _WIN32
 
     if (!args.contains("url")) {
-        return "Missing required argument: url";
+        agent::ToolResult result;
+        result.output = "Missing required argument: url";
+        result.success = false;
+        return result;
     }
 
     std::string url = args["url"];
@@ -17,7 +20,7 @@ std::string OpenWebsiteTool::run(const json& args) {
     }
 
     // Open in default browser
-    HINSTANCE result = ShellExecuteA(
+    HINSTANCE h = ShellExecuteA(
         NULL,
         "open",
         url.c_str(),
@@ -26,11 +29,17 @@ std::string OpenWebsiteTool::run(const json& args) {
         SW_SHOWNORMAL
     );
 
-    if ((INT_PTR)result <= 32) {
-        return "Failed to open website: " + url;
+    if ((INT_PTR)h <= 32) {
+        agent::ToolResult result;
+        result.output = "Failed to open website: " + url;
+        result.success = false;
+        return result;
     }
 
-    return "Opened website: " + url;
+    agent::ToolResult result;
+    result.output = "Opened website: " + url;
+    result.success = true;
+    return result;
 
 #else
     return "OpenWebsiteTool only supported on Windows.";

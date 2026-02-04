@@ -62,9 +62,12 @@ bool ToolRegistry::validateArgs(
 }
 
 
-std::string ToolRegistry::runTool(const std::string& name, const json& args) {
+agent::ToolResult ToolRegistry::runTool(const std::string& name, const json& args) {
     if (!hasTool(name)) {
-        return "Tool not found.";
+        agent::ToolResult result;
+        result.output = "Tool not found.";
+        result.success = false;
+        return result;
     }
 
     Tool* tool = tools[name].get();
@@ -82,7 +85,10 @@ std::string ToolRegistry::runTool(const std::string& name, const json& args) {
         std::getline(std::cin, input);
 
         if (input != "yes") {
-            return "Cancelled.";
+            agent::ToolResult result;
+            result.output = "Cancelled.";
+            result.success = false;
+            return result;
         }
 
         return tool->run(args);
@@ -97,13 +103,19 @@ std::string ToolRegistry::runTool(const std::string& name, const json& args) {
         std::getline(std::cin, input);
 
         if (input != "yes") {
-            return "Blocked critical action.";
+            agent::ToolResult result;
+            result.output = "Blocked critical action.";
+            result.success = false;
+            return result;
         }
 
         return tool->run(args);
     }
 
-    return "Tool blocked: unknown risk level.";
+    agent::ToolResult result;
+    result.output = "Tool blocked: unknown risk level.";
+    result.success = false;
+    return result;
 }
 
 std::string ToolRegistry::listTools() {

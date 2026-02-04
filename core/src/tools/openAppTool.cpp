@@ -51,11 +51,14 @@ std::string findAppPath(const std::string& inputName) {
     return "";
 }
 
-std::string OpenAppTool::run(const json& args) {
+agent::ToolResult OpenAppTool::run(const json& args) {
 #ifdef _WIN32
 
     if (!args.contains("app")) {
-        return "Missing required argument: app";
+        agent::ToolResult result;
+        result.output = "Missing required argument: app";
+        result.success = false;
+        return result;
     }
 
     std::string appName = args["app"];
@@ -63,21 +66,30 @@ std::string OpenAppTool::run(const json& args) {
     std::string path = findAppPath(appName);
 
     if (path.empty()) {
-        return "I don't know where " + appName + " is installed.";
+        agent::ToolResult result;
+        result.output = "I don't know where " + appName + " is installed.";
+        result.success = false;
+        return result;
     }
 
-    HINSTANCE result = ShellExecuteA(
+    HINSTANCE h = ShellExecuteA(
         NULL, "open",
         path.c_str(),
         NULL, NULL,
         SW_SHOWNORMAL
     );
 
-    if ((INT_PTR)result <= 32) {
-        return "Failed to launch: " + appName;
+    if ((INT_PTR)h <= 32) {
+        agent::ToolResult result;
+        result.output = "Failed to launch: " + appName;
+        result.success = false;
+        return result;
     }
 
-    return "Opened: " + appName;
+    agent::ToolResult result;
+    result.output = "Opened: " + appName;
+    result.success = true;
+    return result;
 
 #else
     return "OpenAppTool only implemented on Windows.";
