@@ -12,11 +12,15 @@ public:
     }
 
     std::string description() const override {
-        return "Creates a reminder and saves it into tasks.json.";
+        return "create_reminder(text: string, delay_minutes?: int, time?: string)";
     }
 
     ToolRisk risk() const override {
         return ToolRisk::SAFE;
+    }
+
+    std::vector<std::string> requiredArgs() const override {
+        return {"text"};
     }
 
     std::string run(const json& args) override;

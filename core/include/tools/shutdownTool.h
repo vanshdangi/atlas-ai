@@ -11,11 +11,15 @@ public:
     }
 
     std::string description() const override {
-        return "Shuts down the computer safely.";
+        return "shutdown_pc()";
     }
 
     ToolRisk risk() const override {
         return ToolRisk::CRITICAL;
+    }
+    
+    std::vector<std::string> requiredArgs() const override {
+        return {};
     }
 
     std::string run(const json& args) override;

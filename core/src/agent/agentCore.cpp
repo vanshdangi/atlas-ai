@@ -16,7 +16,7 @@ std::string AgentCore::handle(const std::string& user_input, LlamaEngine& llama,
 
     if (plan.steps.empty()) {
         std::string prompt = PromptBuilder::build(user_input, memory.facts, memory.conversation);
-        return llama.generate_from_prompt(prompt, 1024);
+        return llama.generate_chat(prompt, 1024);
     }
 
     Executor executor;
@@ -28,13 +28,13 @@ std::string AgentCore::handle(const std::string& user_input, LlamaEngine& llama,
         const ExecutionResult& er = results[i];
         const Step& step = plan.steps[i];
         if (er.success) {
-            reply << "\u2705 " << er.tool_result.output;
+            reply << "[OK] " << er.tool_result.output;
         } else {
             ReflectionResult rr = reflector.reflect(er, step);
             if (!rr.question.empty())
-                reply << "\u274c " << rr.question << " (" << er.tool_result.output << ")";
+                reply << "[FAIL] " << rr.question << " (" << er.tool_result.output << ")";
             else
-                reply << "\u274c " << er.tool_result.output;
+                reply << "[FAIL] " << er.tool_result.output;
         }
         if (i + 1 < results.size()) reply << "\n";
     }

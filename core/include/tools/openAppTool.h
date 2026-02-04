@@ -10,11 +10,15 @@ public:
     }
 
     std::string description() const override {
-        return "Opens an application like chrome, spotify, vscode.";
+        return "open_app(app: string)";
     }
 
     ToolRisk risk() const override {
         return ToolRisk::SAFE;
+    }
+
+    std::vector<std::string> requiredArgs() const override {
+        return {"app"};
     }
 
     std::string run(const json& args) override;

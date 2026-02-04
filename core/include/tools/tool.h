@@ -20,5 +20,7 @@ public:
 
     virtual ToolRisk risk() const = 0;
 
+    virtual std::vector<std::string> requiredArgs() const = 0;
+
     virtual std::string run(const json& args) = 0;
 };

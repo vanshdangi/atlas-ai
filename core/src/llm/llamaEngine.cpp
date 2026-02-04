@@ -48,16 +48,30 @@ LlamaEngine::~LlamaEngine() {
 
 
 
-std::string LlamaEngine::generate_from_prompt(
+std::string LlamaEngine::generate_chat(
     const std::string& prompt,
     int max_tokens
 ) {
     const llama_vocab* vocab = llama_model_get_vocab(model);
-    llama_sampler* sampler = llama_sampler_init_greedy();
 
-    llama_memory_clear(llama_get_memory(ctx), false);
+    // ✅ Build Sampler Chain
+    llama_sampler* sampler =
+        llama_sampler_chain_init(llama_sampler_chain_default_params());
 
-    std::vector<llama_token> tokens(prompt.size() + 1024);
+    llama_sampler_chain_add(sampler,
+        llama_sampler_init_temp(0.7f));
+
+    llama_sampler_chain_add(sampler,
+        llama_sampler_init_top_p(0.9f, 1));
+
+    llama_sampler_chain_add(sampler,
+        llama_sampler_init_dist(42));
+
+    // ✅ Clear context
+    llama_memory_clear(llama_get_memory(ctx), true);
+
+    // ---- Tokenize Prompt ----
+    std::vector<llama_token> tokens(prompt.size() + 512);
 
     int n = llama_tokenize(
         vocab,
@@ -69,23 +83,81 @@ std::string LlamaEngine::generate_from_prompt(
         true
     );
 
-    if (n < 0) throw std::runtime_error("Tokenization failed");
-
     tokens.resize(n);
 
-    int chunk_size = 512;
-
-    for (int i = 0; i < n; i += chunk_size) {
-        int size = std::min(chunk_size, n - i);
-
-        llama_decode(ctx,
-            llama_batch_get_one(tokens.data() + i, size)
-        );
-    }
+    llama_decode(ctx,
+        llama_batch_get_one(tokens.data(), tokens.size()));
 
     std::string output;
 
-    for (int i = 0; i < max_tokens; ++i) {
+    // ---- Generate ----
+    for (int i = 0; i < max_tokens; i++) {
+
+        llama_token token =
+            llama_sampler_sample(sampler, ctx, -1);
+
+        if (token == llama_vocab_eos(vocab))
+            break;
+
+        llama_decode(ctx,
+            llama_batch_get_one(&token, 1));
+
+        char buf[256];
+        int32_t n_bytes = 0;
+
+        int len = llama_token_to_piece(
+            vocab, token,
+            buf, sizeof(buf),
+            n_bytes,
+            false
+        );
+
+        if (len > 0)
+            output.append(buf, len);
+    }
+
+    llama_sampler_free(sampler);
+    return output;
+}
+
+
+
+std::string LlamaEngine::generate_json(
+    const std::string& prompt,
+    int max_tokens
+)
+{
+    const llama_vocab* vocab = llama_model_get_vocab(model);
+    llama_sampler* sampler = llama_sampler_init_greedy();
+
+    
+    llama_memory_clear(llama_get_memory(ctx), true);
+
+    
+    std::vector<llama_token> tokens(prompt.size() + 512);
+
+    int n = llama_tokenize(
+        vocab,
+        prompt.c_str(),
+        prompt.size(),
+        tokens.data(),
+        tokens.size(),
+        false,
+        true
+    );
+
+    tokens.resize(n);
+
+    llama_decode(ctx, llama_batch_get_one(tokens.data(), tokens.size()));
+
+    
+    std::string output;
+
+    
+    int brace_depth = 0;
+    bool started = false;
+
+    for (int i = 0; i < max_tokens; i++) {
 
         llama_token token = llama_sampler_sample(sampler, ctx, -1);
 
@@ -94,15 +166,37 @@ std::string LlamaEngine::generate_from_prompt(
 
         llama_decode(ctx, llama_batch_get_one(&token, 1));
 
-        char buffer[256];
+        char buf[256];
         int32_t n_bytes = 0;
 
         int len = llama_token_to_piece(
-            vocab, token, buffer, sizeof(buffer), n_bytes, false
+            vocab, token,
+            buf, sizeof(buf),
+            n_bytes,
+            false
         );
 
-        if (len > 0) {
-            output.append(buffer, len);
+        if (len <= 0) continue;
+
+        std::string piece(buf, len);
+        output += piece;
+
+        
+        for (char c : piece) {
+
+            if (c == '{') {
+                brace_depth++;
+                started = true;
+            }
+
+            if (c == '}') {
+                brace_depth--;
+
+                if (started && brace_depth == 0) {
+                    llama_sampler_free(sampler);
+                    return output;
+                }
+            }
         }
     }
 

@@ -11,11 +11,15 @@ public:
     }
 
     std::string description() const override {
-        return "Opens a website";
+        return "open_website(url: string)";
     }
 
     ToolRisk risk() const override {
         return ToolRisk::SAFE;
+    }
+
+    std::vector<std::string> requiredArgs() const override {
+        return {"url"};
     }
 
     std::string run(const json& args) override;

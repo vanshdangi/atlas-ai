@@ -16,6 +16,12 @@ public:
 
     bool hasTool(const std::string& name);
 
+    bool validateArgs(
+        const std::string& toolName,
+        const nlohmann::json& args
+    );
+
+
     std::string runTool(const std::string& name, const json& args);
 
     std::string listTools();
