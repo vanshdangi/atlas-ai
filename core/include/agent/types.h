@@ -30,11 +30,21 @@ struct ExecutionResult {
     bool success = false;
 };
 
+enum class ReflectionAction {
+    NONE,
+    RETRY,
+    FALLBACK,
+    ASK_USER,
+    ABORT
+};
+
 struct ReflectionResult {
-    bool needs_retry = false;
-    bool needs_clarification = false;
+    ReflectionAction action = ReflectionAction::NONE;
+
     std::string question;
-    std::string fallback_tool;
+
+    bool has_new_step = false;
+    Step new_step;
 };
 
 } // namespace agent

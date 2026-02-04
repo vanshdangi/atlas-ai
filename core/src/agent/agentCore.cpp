@@ -20,24 +20,49 @@ std::string AgentCore::handle(const std::string& user_input, LlamaEngine& llama,
     }
 
     Executor executor;
-    std::vector<ExecutionResult> results = executor.execute(plan, registry);
     Reflector reflector;
 
     std::ostringstream reply;
-    for (size_t i = 0; i < results.size(); ++i) {
-        const ExecutionResult& er = results[i];
-        const Step& step = plan.steps[i];
+    for (const Step& step : plan.steps) {
+        ExecutionResult er = executor.executeStep(step, registry);
+
         if (er.success) {
-            reply << "[OK] " << er.tool_result.output;
-        } else {
-            ReflectionResult rr = reflector.reflect(er, step);
-            if (!rr.question.empty())
-                reply << "[FAIL] " << rr.question << " (" << er.tool_result.output << ")";
-            else
-                reply << "[FAIL] " << er.tool_result.output;
+            reply << "[OK] " << er.tool_result.output << "\n";
+            continue;
         }
-        if (i + 1 < results.size()) reply << "\n";
+
+        // Reflect immediately
+        ReflectionResult rr = reflector.reflect(er, step);
+
+        // Retry
+        if (rr.action == ReflectionAction::RETRY) {
+            ExecutionResult retry = executor.executeStep(step, registry);
+
+            if (retry.success) {
+                reply << "[OK after retry] " << retry.tool_result.output << "\n";
+                continue;
+            }
+        }
+
+        // Fallback
+        if (rr.action == ReflectionAction::FALLBACK && rr.has_new_step) {
+            ExecutionResult fb =
+                executor.executeStep(rr.new_step, registry);
+
+            if (fb.success) {
+                reply << "[OK fallback] " << fb.tool_result.output << "\n";
+                continue;
+            }
+        }
+
+        // Ask user
+        if (rr.action == ReflectionAction::ASK_USER) {
+            return rr.question;
+        }
+
+        return "[FAILed] " + rr.question;
     }
+
     return reply.str();
 }
 

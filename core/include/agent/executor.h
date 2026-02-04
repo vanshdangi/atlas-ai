@@ -10,7 +10,15 @@ namespace agent {
 class Executor {
 public:
     /** Execute plan steps sequentially. Returns one result per step. */
-    std::vector<ExecutionResult> execute(const Plan& plan, ToolRegistry& registry);
+    std::vector<ExecutionResult> execute(
+        const Plan& plan,
+        ToolRegistry& registry
+    );
+
+    ExecutionResult executeStep(
+        const Step& step,
+        ToolRegistry& registry
+    );
 };
 
 } // namespace agent

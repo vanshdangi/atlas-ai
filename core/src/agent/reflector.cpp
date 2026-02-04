@@ -12,6 +12,20 @@ std::string toLower(std::string s) {
     return s;
 }
 
+static std::string normalizeDomain(std::string app) {
+
+    // lowercase
+    std::transform(app.begin(), app.end(), app.begin(),
+        [](unsigned char c) { return std::tolower(c); });
+
+    // remove spaces
+    app.erase(std::remove_if(app.begin(), app.end(),
+        [](char c) { return std::isspace(c); }),
+        app.end());
+
+    return app;
+}
+
 } // namespace
 
 ReflectionResult Reflector::reflect(const ExecutionResult& result, const Step& step) {
@@ -20,28 +34,50 @@ ReflectionResult Reflector::reflect(const ExecutionResult& result, const Step& s
 
     std::string out = toLower(result.tool_result.output);
 
-    if (out.find("not found") != std::string::npos || out.find("don't know where") != std::string::npos) {
-        rr.needs_clarification = true;
-        rr.question = "Which application or website did you mean?";
-        if (step.tool == "open_app")
-            rr.fallback_tool = "open_website";
+    // App not found → fallback to website search
+    if (out.find("not found") != std::string::npos) {
+
+        if (step.tool == "open_app") {
+            std::string app = "";
+            if (step.args.contains("app")) {
+                app = step.args["app"].get<std::string>();
+            }
+
+            rr.action = ReflectionAction::FALLBACK;
+            rr.has_new_step = true;
+
+            rr.new_step.tool = "open_website";
+            rr.new_step.id = step.id;
+
+            rr.new_step.args = {
+                {"url", "https://" + normalizeDomain(app) + ".com"}
+            };
+            return rr;
+        }
+
+        rr.action = ReflectionAction::ASK_USER;
+        rr.question = "I could not find that app. What exactly should I open?";
         return rr;
     }
 
+    // Missing args → ask user
     if (out.find("missing") != std::string::npos) {
-        rr.needs_clarification = true;
-        rr.question = "I need more details to run " + step.tool + ". Can you specify the required information?";
+        rr.action = ReflectionAction::ASK_USER;
+        rr.question = "I need more details to run that tool. Can you clarify?";
         return rr;
     }
 
-    if (out.find("cancelled") != std::string::npos || out.find("blocked") != std::string::npos) {
-        rr.needs_retry = true;
+    // Cancelled → retry once
+    if (out.find("cancelled") != std::string::npos) {
+        rr.action = ReflectionAction::RETRY;
         return rr;
     }
 
-    rr.needs_retry = true;
-    rr.question = "Something went wrong: " + result.tool_result.output;
+    // Default → abort
+    rr.action = ReflectionAction::ABORT;
+    rr.question = "That task failed: " + result.tool_result.output;
     return rr;
 }
+
 
 } // namespace agent

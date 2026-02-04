@@ -7,7 +7,7 @@ agent::ToolResult OpenWebsiteTool::run(const json& args) {
 
     if (!args.contains("url")) {
         agent::ToolResult result;
-        result.output = "Missing required argument: url";
+        result.output = "missing required argument: url";
         result.success = false;
         return result;
     }

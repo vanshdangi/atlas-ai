@@ -18,7 +18,7 @@ bool ToolManager::isToolCall(const std::string& text) {
     return text.find("\"tool\"") != std::string::npos;
 }
 
-std::string ToolManager::executeToolCall(
+agent::ToolResult ToolManager::executeToolCall(
     const std::string& jsonText,
     ToolRegistry& registry
 ) {
@@ -27,7 +27,10 @@ std::string ToolManager::executeToolCall(
 
         // Tool name
         if (!call.contains("tool")) {
-            return "Tool call missing 'tool'.";
+            agent::ToolResult result;
+            result.output = "Tool call missing 'tool'.";
+            result.success = false;
+            return result;
         }
 
         std::string tool = call["tool"];
@@ -42,18 +45,13 @@ std::string ToolManager::executeToolCall(
                 args = call["args"];
             }
         }
-        
-        if (tool == "list_tools") {
-            return R"(Available tools:
-- open_app
-- create_reminder
-- shutdown_pc)";
-        }
-
         // Dispatch via registry
         return registry.runTool(tool, args);
     }
     catch (const std::exception& e) {
-        return std::string("Tool JSON parse error: ") + e.what();
+        agent::ToolResult result;
+        result.output = std::string("Tool JSON parse error: ") + e.what();
+        result.success = false;
+        return result;
     }
 }

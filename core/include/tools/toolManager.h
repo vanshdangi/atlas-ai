@@ -15,5 +15,5 @@ public:
         TaskScheduler& scheduler
     );
     static bool isToolCall(const std::string& text);
-    static std::string executeToolCall(const std::string& jsonText, ToolRegistry& registry);
+    static agent::ToolResult executeToolCall(const std::string& jsonText, ToolRegistry& registry);
 };

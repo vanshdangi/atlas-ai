@@ -62,7 +62,7 @@ agent::ToolResult ReminderTool::run(const json& args) {
 
     if (!args.contains("text")) {
         agent::ToolResult result;
-        result.output = "Reminder failed: Missing text.";
+        result.output = "Reminder failed: missing text.";
         result.success = false;
         return result;
     }
@@ -96,7 +96,6 @@ agent::ToolResult ReminderTool::run(const json& args) {
     task.dueTime = due_time;
     task.completed = false;
 
-    // ✅ Case 1: Tool scheduling
     if (args.contains("tool_call")) {
 
         task.type = "tool";
@@ -104,7 +103,6 @@ agent::ToolResult ReminderTool::run(const json& args) {
         task.message = "Scheduled tool action: " + message;
     }
 
-    // ✅ Case 2: Normal reminder
     else {
 
         task.type = "reminder";

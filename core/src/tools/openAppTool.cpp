@@ -67,7 +67,7 @@ agent::ToolResult OpenAppTool::run(const json& args) {
 
     if (path.empty()) {
         agent::ToolResult result;
-        result.output = "I don't know where " + appName + " is installed.";
+        result.output = appName + " not found.";
         result.success = false;
         return result;
     }
