@@ -157,6 +157,12 @@ Built using excellent open-source projects:
 - nlohmann/json
 
 ---
-## License
+## License Notice
 
-Licensed under the terms in `LICENSE`.
+Atlas-AI is **not open-source**.
+
+This project is publicly visible for **portfolio and educational showcase purposes only**.
+You may not reuse, modify, or redistribute any part of this repository without
+explicit permission from the author.
+
+© 2026 Vansh Dangi. All rights reserved.
