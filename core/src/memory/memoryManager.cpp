@@ -20,7 +20,6 @@ void MemoryManager::on_user_input(const std::string& text) {
     conversation.trim(8);
     if (text.find("remember") != std::string::npos ||
         text.find("exam") != std::string::npos ||
-        text.find("meeting") != std::string::npos ||
         text.find("deadline") != std::string::npos) {
 
         rag.addMemory({
@@ -35,17 +34,6 @@ void MemoryManager::on_user_input(const std::string& text) {
 void MemoryManager::on_assistant_output(const std::string& text) {
     conversation.add_assistant(text);
     conversation.trim(8);
-
-    if (text.find("scheduled") != std::string::npos ||
-        text.find("created reminder") != std::string::npos) {
-
-        rag.addMemory({
-            generate_id(),
-            current_timestamp(),
-            text,
-            "tool_result"
-        });
-    }
 
     turn_count++;
 

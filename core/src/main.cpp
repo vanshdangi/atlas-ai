@@ -39,11 +39,9 @@ int main() {
     scheduler.start();
 
     toolManager.registerAllTools(registry, scheduler);
-    std::cout << "registered Tools\n";
 
     MemoryManager memory("../../core/data", llama);
     memory.load();
-    std::cout << "loaded memory\n";
 
     AutonomousSystem autonomousSystem(scheduler);
     autonomousSystem.start();
