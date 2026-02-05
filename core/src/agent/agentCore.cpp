@@ -15,7 +15,7 @@ std::string AgentCore::handle(const std::string& user_input, LlamaEngine& llama,
     Plan plan = planner.plan(user_input, registry, llama);
 
     if (plan.steps.empty()) {
-        std::string prompt = PromptBuilder::build(user_input, memory.facts, memory.conversation);
+        std::string prompt = PromptBuilder::build(user_input, memory);
         return llama.generate_chat(prompt, 1024);
     }
 

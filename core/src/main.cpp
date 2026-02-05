@@ -39,9 +39,11 @@ int main() {
     scheduler.start();
 
     toolManager.registerAllTools(registry, scheduler);
+    std::cout << "registered Tools\n";
 
-    MemoryManager memory("../../core/data");
+    MemoryManager memory("../../core/data", llama);
     memory.load();
+    std::cout << "loaded memory\n";
 
     AutonomousSystem autonomousSystem(scheduler);
     autonomousSystem.start();
@@ -56,7 +58,7 @@ int main() {
         std::string input = whisper.transcribe(audio);
         trim_and_normalize(input);
         
-        memory.conversation.add_user(input);
+        memory.on_user_input(input);
         
         // Print Input
         std::cout << "\nYou: ";
@@ -83,8 +85,7 @@ int main() {
         piper.speakAsync(output);
 
         // Save Output
-        memory.conversation.add_assistant(output);
-        memory.conversation.trim();
+        memory.on_assistant_output(output);
         memory.save();
 
         std::cout << "--------------------------------------------------\n";

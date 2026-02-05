@@ -29,6 +29,8 @@ set(ATLAS_SOURCES
     core/src/memory/conversationMemory.cpp
     core/src/memory/factMemory.cpp
     core/src/memory/memoryManager.cpp
+    core/src/memory/ragMemory.cpp
+    core/src/memory/summaryMemory.cpp
 
     # Speech
     core/src/speech/audioInput.cpp

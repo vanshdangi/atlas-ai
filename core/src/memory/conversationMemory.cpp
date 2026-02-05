@@ -14,6 +14,10 @@ void ConversationMemory::trim(size_t max_messages) {
     }
 }
 
+void ConversationMemory::clear() {
+    history.clear();
+}
+
 std::string ConversationMemory::to_prompt_block() const {
     std::string block;
 
@@ -23,4 +27,12 @@ std::string ConversationMemory::to_prompt_block() const {
     }
 
     return block;
+}
+
+std::string ConversationMemory::to_plain_text() const {
+    std::string out;
+    for (auto& msg : history) {
+        out += msg.role + ": " + msg.content + "\n";
+    }
+    return out;
 }

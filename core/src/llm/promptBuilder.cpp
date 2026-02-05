@@ -25,8 +25,7 @@ Stay purely conversational.)";
 
 std::string PromptBuilder::build(
     const std::string& user_input,
-    const FactMemory& facts,
-    const ConversationMemory& convo
+    MemoryManager& memoryManager
 ) {
     std::string prompt = "<|begin_of_text|>";
 
@@ -35,16 +34,8 @@ std::string PromptBuilder::build(
     prompt += system_prompt();
     prompt += "\n<|eot_id|>\n";
 
-    // Facts
-    std::string fact_block = facts.to_prompt_block();
-    if (!fact_block.empty()) {
-        prompt += "<|start_header_id|>system<|end_header_id|>\n";
-        prompt += fact_block;
-        prompt += "\n<|eot_id|>\n";
-    }
-
-    // Conversation History
-    prompt += convo.to_prompt_block();
+    // Memory
+    prompt += memoryManager.build_prompt_block(user_input);
 
     // Current Input
     prompt += "<|start_header_id|>user<|end_header_id|>\n";

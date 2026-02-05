@@ -5,7 +5,8 @@
 using json = nlohmann::json;
 
 void FactMemory::load(const std::string& path) {
-    std::ifstream f(path);
+    std::string fact_path = path +  + "/memory/facts.json";
+    std::ifstream f(fact_path);
     if (!f.is_open()) return;
 
     json j;
@@ -14,8 +15,9 @@ void FactMemory::load(const std::string& path) {
 }
 
 void FactMemory::save(const std::string& path) const {
+    std::string fact_path = path +  + "/memory/facts.json";
     json j = facts;
-    std::ofstream f(path);
+    std::ofstream f(fact_path);
     f << j.dump(4);
 }
 
