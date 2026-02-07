@@ -19,7 +19,10 @@ add_subdirectory(external/webrtcvad)
 # ---------------- Sources ----------------
 set(ATLAS_SOURCES
     core/src/main.cpp
+
+    #utils
     core/src/utils/utils.cpp
+    core/src/utils/timeUtils.cpp
 
     # LLM
     core/src/llm/llamaEngine.cpp

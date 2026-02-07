@@ -1,4 +1,5 @@
 #include "llm/promptBuilder.h"
+#include "utils/timeUtils.h"
 
 static std::string system_prompt() {
   return R"(You are Atlas, a smart AI assistant running locally.
@@ -32,6 +33,11 @@ std::string PromptBuilder::build(
     // System Instructions
     prompt += "<|start_header_id|>system<|end_header_id|>\n";
     prompt += system_prompt();
+    prompt += "\n<|eot_id|>\n";
+
+    // Time Info
+    prompt += "<|start_header_id|>time<|end_header_id|>\n";
+    prompt += build_time_context();
     prompt += "\n<|eot_id|>\n";
 
     // Memory
