@@ -12,6 +12,14 @@ bool ToolRegistry::hasTool(const std::string& name) {
     return tools.find(name) != tools.end();
 }
 
+ToolRisk ToolRegistry::toolRisk(const std::string& name) const {
+    auto it = tools.find(name);
+    if (it == tools.end()) {
+        return ToolRisk::SAFE;
+    }
+    return it->second->risk();
+}
+
 bool ToolRegistry::validateArgs(
     const std::string& toolName,
     const json& args
@@ -71,51 +79,7 @@ agent::ToolResult ToolRegistry::runTool(const std::string& name, const json& arg
     }
 
     Tool* tool = tools[name].get();
-    ToolRisk risk = tool->risk();
-
-    if (risk == ToolRisk::SAFE) {
-        return tool->run(args);
-    }
-
-    if (risk == ToolRisk::CONFIRM) {
-        std::cout << "\n Confirmation required for tool: " << name << "\n";
-        std::cout << "Type yes to confirm: ";
-
-        std::string input;
-        std::getline(std::cin, input);
-
-        if (input != "yes") {
-            agent::ToolResult result;
-            result.output = "Cancelled.";
-            result.success = false;
-            return result;
-        }
-
-        return tool->run(args);
-    }
-
-    if (risk == ToolRisk::CRITICAL) {
-        std::cout << "\nCRITICAL TOOL REQUESTED: " << name << "\n";
-        std::cout << "This may shut down your PC or delete files.\n";
-        std::cout << "Type YES to confirm: ";
-
-        std::string input;
-        std::getline(std::cin, input);
-
-        if (input != "yes") {
-            agent::ToolResult result;
-            result.output = "Blocked critical action.";
-            result.success = false;
-            return result;
-        }
-
-        return tool->run(args);
-    }
-
-    agent::ToolResult result;
-    result.output = "Tool blocked: unknown risk level.";
-    result.success = false;
-    return result;
+    return tool->run(args);
 }
 
 std::string ToolRegistry::listTools() {

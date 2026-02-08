@@ -63,6 +63,7 @@ set(ATLAS_SOURCES
     core/src/agent/planner.cpp
     core/src/agent/executor.cpp
     core/src/agent/reflector.cpp
+    core/src/agent/decisionGate.cpp
     core/src/agent/agentCore.cpp
 )
 

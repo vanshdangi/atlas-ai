@@ -2,6 +2,7 @@
 #include "agent/planner.h"
 #include "agent/executor.h"
 #include "agent/reflector.h"
+#include "agent/decisionGate.h"
 #include "llm/llamaEngine.h"
 #include "llm/promptBuilder.h"
 #include "memory/memoryManager.h"
@@ -21,9 +22,31 @@ std::string AgentCore::handle(const std::string& user_input, LlamaEngine& llama,
 
     Executor executor;
     Reflector reflector;
+    DecisionGate gate;
 
     std::ostringstream reply;
     for (const Step& step : plan.steps) {
+        GateDecision gd =
+            gate.decide(step, registry, user_input, DecisionSource::USER);
+
+        if (gd.outcome == GateOutcome::CLARIFY) {
+            return gd.message.empty()
+                ? "I need more specific details to proceed."
+                : gd.message;
+        }
+
+        if (gd.outcome == GateOutcome::REJECT) {
+            return gd.message.empty()
+                ? "That action was rejected."
+                : gd.message;
+        }
+
+        if (gd.outcome == GateOutcome::CONFIRM) {
+            if (!gate.confirm(gd)) {
+                return "Cancelled.";
+            }
+        }
+
         ExecutionResult er = executor.executeStep(step, registry);
 
         if (er.success) {

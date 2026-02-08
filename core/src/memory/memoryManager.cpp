@@ -1,10 +1,11 @@
 #include "memory/memoryManager.h"
+#include "utils/timeUtils.h"
 #include "utils/utils.h"
 
 MemoryManager::MemoryManager(const std::string& data_dir, const LlamaEngine& engine)
     : llamaEngine(engine),
     summary(data_dir + "/memory/summary.txt"),
-    rag(data_dir + "/memory/episodes.json"),
+    rag(data_dir + "/memory/episodic/episodes.json"),
     path(data_dir) {}
 
 void MemoryManager::load() {
@@ -46,7 +47,7 @@ Do not include chit-chat.
 Conversation:
 )";
         summaryPrompt += conversation.to_plain_text();
-        std::string output = llamaEngine.generate_chat(summaryPrompt);
+        std::string output = llamaEngine.generate_chat(summaryPrompt, 512);
         summary.saveSummary(output);
         conversation.clear();
     }

@@ -16,6 +16,7 @@ public:
     void registerTool(std::unique_ptr<Tool> tool);
 
     bool hasTool(const std::string& name);
+    ToolRisk toolRisk(const std::string& name) const;
 
     bool validateArgs(
         const std::string& toolName,
