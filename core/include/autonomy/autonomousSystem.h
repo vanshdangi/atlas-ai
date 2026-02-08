@@ -12,6 +12,7 @@ public:
 private:
     bool running = true;
     TaskScheduler& scheduler;
+    std::thread worker;
 
     TriggerManager triggers;
 

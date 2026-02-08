@@ -20,6 +20,7 @@
 #pragma comment(lib, "winmm.lib")
 
 int main() {
+    llama_backend_init();
     LlamaEngine llama(
         "../../models/llama/Meta-Llama-3.1-8B-instruct-Q4_K_M.gguf"
     );
@@ -89,6 +90,8 @@ int main() {
         std::cout << "--------------------------------------------------\n";
     }
 
+    autonomousSystem.stop();
     scheduler.stop();
+    llama_backend_free();
     return 0;
 }

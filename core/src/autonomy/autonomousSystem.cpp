@@ -16,11 +16,14 @@ AutonomousSystem::AutonomousSystem(TaskScheduler& sched)
 }
 
 void AutonomousSystem::start() {
-    std::thread([this]() { loop(); }).detach();
+    running = true;
+    worker = std::thread([this]() { loop(); });
 }
 
 void AutonomousSystem::stop() {
     running = false;
+    if (worker.joinable())
+        worker.join();
 }
 
 void AutonomousSystem::loop() {

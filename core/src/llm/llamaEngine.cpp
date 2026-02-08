@@ -19,7 +19,6 @@ static void silence_all_logs() {
 // ---------------- LlamaEngine ----------------
 LlamaEngine::LlamaEngine(const std::string& model_path) {
     silence_all_logs();
-    llama_backend_init();
 
     auto model_params = llama_model_default_params();
     model_params.n_gpu_layers = 35;
@@ -42,7 +41,6 @@ LlamaEngine::LlamaEngine(const std::string& model_path) {
 LlamaEngine::~LlamaEngine() {
     if (ctx) llama_free(ctx);
     if (model) llama_free_model(model);
-    llama_backend_free();
 }
 
 
