@@ -2,6 +2,7 @@
 #include "agent/prompts.h"
 #include "llm/llamaEngine.h"
 #include "tools/toolRegistry.h"
+#include "utils/timeUtils.h"
 #include "nlohmann/json.hpp"
 #include <string>
 #include <algorithm>
@@ -20,6 +21,9 @@ std::string planningPrompt(
 
 Your job:
 Decide whether the user request requires using tools.
+
+Current Context:
+)" + build_time_context() + R"(
 
 RULES:
 
