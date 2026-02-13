@@ -34,6 +34,7 @@ set(ATLAS_SOURCES
     core/src/memory/memoryManager.cpp
     core/src/memory/ragMemory.cpp
     core/src/memory/summaryMemory.cpp
+    core/src/memory/goalMemory.cpp
 
     # Speech
     core/src/speech/audioInput.cpp

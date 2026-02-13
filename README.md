@@ -4,14 +4,16 @@ Atlas AI is a personal, offline assistant built in modern C++ for Windows. It co
 
 The project is a learning-focused engineering sandbox for agent-style pipelines, persistent memory, and automation. It is not a polished consumer product.
 
-**Core Flow**
+## Core Flow
+
 1. WebRTC VAD listens for speech and records a command.
 2. Whisper transcribes audio to text.
 3. A planner decides whether to call tools or just chat.
 4. Tools run through a decision gate and reflection loop.
 5. Responses are spoken with Piper and memory is updated.
 
-**Current Features**
+## Current Features
+
 - Offline LLM chat using GGUF models via `llama.cpp`
 - Voice input with VAD + Whisper STT
 - Voice output with Piper TTS and WinMM playback
@@ -20,23 +22,27 @@ The project is a learning-focused engineering sandbox for agent-style pipelines,
 - Task scheduling with reminders saved to disk
 - Experimental autonomy triggers (idle and battery)
 
-**Tools**
+## Tools
+
 - `open_app(app: string)` opens apps from `core/data/config/apps.json`
 - `open_website(url: string)` opens URLs in the default browser
 - `create_reminder(text: string, delay_minutes?: int, delay_seconds?: int, time?: "YYYY-MM-DD HH:MM")`
 - `shutdown_pc()` critical action that requires confirmation
 
-**Memory**
+## Memory
+
 - `core/data/memory/summary.txt` long-term summaries (updated every 8 turns)
 - `core/data/memory/episodic/episodes.json` episodic events (simple substring search, no embeddings yet)
 - `core/data/memory/facts.json` user facts (key-value)
 - Conversation window keeps the last 8 messages in the prompt
 
-**Autonomy (Experimental)**
+## Autonomy (Experimental)
+
 - Idle and battery triggers run in a background thread and enqueue scheduled tasks
 - Trigger actions currently map to placeholder tool calls (`speak`, `enable_battery_saver`) that are not implemented yet
 
-**Tech Stack**
+## Tech Stack
+
 - C++17
 - `llama.cpp` (GGUF inference, CUDA enabled)
 - `whisper.cpp` (speech recognition)
@@ -44,7 +50,8 @@ The project is a learning-focused engineering sandbox for agent-style pipelines,
 - WebRTC VAD (libfvad)
 - nlohmann/json
 
-**Project Structure**
+## Project Structure
+
 ```text
 core/
   src/
@@ -74,13 +81,15 @@ models/
   piper/
 ```
 
-**Requirements**
+## Requirements
+
 - Windows (Win32 APIs are used for audio and `ShellExecute`)
 - Visual Studio 2022 (MSVC)
 - CMake >= 3.26
 - CUDA Toolkit (the project enables CUDA in CMake)
 
-**Setup**
+## Setup
+
 1. Clone with submodules:
    `git clone --recurse-submodules https://github.com/vanshdangi/atlas-ai.git`
 2. If you already cloned:
@@ -91,13 +100,15 @@ models/
    `models/piper/en_US-hal_6409-medium/` with the `.onnx` and `.onnx.json` files
 4. Optional: update app paths in `core/data/config/apps.json`
 
-**Build**
+## Build
+
 ```bash
 cmake -S . -B build
 cmake --build build --config Release
 ```
 
-**Run**
+## Run
+
 1. `cd build\Release`
 2. `.\atlas_ai.exe`
 
@@ -105,24 +116,29 @@ If you run from another directory, update the hard-coded paths in:
 `core/src/main.cpp`
 `core/src/speech/piperTTS.cpp`
 
-**Notes**
+## Notes
+
 - Planner output is JSON; only tools registered in `ToolRegistry` can be executed.
 - The decision gate requests confirmation for critical actions.
 - Time context is hard-coded to `Asia/Kolkata` in `core/src/utils/timeUtils.cpp`.
 - Autonomy and scheduled tool execution are early-stage.
 
-**Disclaimer**
+## Disclaimer
+
 Atlas AI is an active personal engineering project and may be unstable or incomplete.
 
-**Acknowledgments**
+## Acknowledgments
+
 Built with:
+
 - llama.cpp
 - whisper.cpp
 - Piper TTS
 - WebRTC VAD
 - nlohmann/json
 
-**License Notice**
+## License Notice
+
 Atlas-AI is not open-source.
 This project is publicly visible for portfolio and educational showcase only.
 You may not reuse, modify, or redistribute any part of this repository without explicit permission from the author.
