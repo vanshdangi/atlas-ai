@@ -1,8 +1,13 @@
 #include "llm/promptBuilder.h"
 #include "utils/timeUtils.h"
+#include "agent/worldState.h"
 
 static std::string system_prompt() {
   return R"(You are Atlas, a smart AI assistant running locally.
+
+You are aware of the current world_state block.
+Use time, battery, and idle state when relevant.
+Do not mention world_state unless contextually useful.
 
 Your role is ONLY normal conversation:
 
@@ -28,27 +33,27 @@ std::string PromptBuilder::build(
     const std::string& user_input,
     MemoryManager& memoryManager
 ) {
+    WorldState worldState;
+
     std::string prompt = "<|begin_of_text|>";
 
-    // System Instructions
+    // System
     prompt += "<|start_header_id|>system<|end_header_id|>\n";
     prompt += system_prompt();
     prompt += "\n<|eot_id|>\n";
 
-    // Time Info
-    prompt += "<|start_header_id|>time<|end_header_id|>\n";
-    prompt += build_time_context();
-    prompt += "\n<|eot_id|>\n";
+    // World State
+    prompt += worldState.to_prompt_block();
 
     // Memory
     prompt += memoryManager.build_prompt_block(user_input);
 
-    // Current Input
+    // User
     prompt += "<|start_header_id|>user<|end_header_id|>\n";
     prompt += user_input + "\n<|eot_id|>\n";
 
-    // Assistant Response Starts
     prompt += "<|start_header_id|>assistant<|end_header_id|>\n";
 
     return prompt;
 }
+

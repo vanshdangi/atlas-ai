@@ -66,6 +66,7 @@ set(ATLAS_SOURCES
     core/src/agent/reflector.cpp
     core/src/agent/decisionGate.cpp
     core/src/agent/agentCore.cpp
+    core/src/agent/worldState.cpp
 )
 
 # ---------------- Executable ----------------
