@@ -6,6 +6,7 @@ MemoryManager::MemoryManager(const std::string& data_dir, const LlamaEngine& eng
     : llamaEngine(engine),
     summary(data_dir + "/memory/summary.txt"),
     rag(data_dir + "/memory/episodic/episodes.json"),
+    goalMemory(data_dir + "/memory/goals.json"),
     path(data_dir) {}
 
 void MemoryManager::load() {
@@ -56,14 +57,21 @@ Conversation:
 std::string MemoryManager::build_prompt_block(const std::string& user_query) {
     std::string block;
 
-    // 1. Summary memory (always first)
+    // 1. Summary memory
     auto summary_text = summary.loadSummary();
     if (!summary_text.empty()) {
         block += "=== LONG-TERM CONTEXT ===\n";
         block += summary_text + "\n\n";
     }
 
-    // 2. Relevant episodic memories (RAG)
+    // 2. Active goals (behavior bias layer)
+    auto goal_block = goalMemory.toPromptBlock();
+    if (!goal_block.empty()) {
+        block += "=== ACTIVE GOALS ===\n";
+        block += goal_block + "\n";
+    }
+
+    // 3. Relevant episodic memories (RAG)
     auto memories = rag.search(user_query);
     if (!memories.empty()) {
         block += "=== RELEVANT MEMORIES ===\n";
@@ -73,11 +81,11 @@ std::string MemoryManager::build_prompt_block(const std::string& user_query) {
         block += "\n";
     }
 
-    // 3. Stable facts
+    // 4. Stable facts
     block += facts.to_prompt_block();
     block += "\n";
 
-    // 4. Recent conversation
+    // 5. Recent conversation
     block += conversation.to_prompt_block();
 
     return block;

@@ -4,6 +4,7 @@
 #include "memory/summaryMemory.h"
 #include "memory/ragMemory.h"
 #include "llm/llamaEngine.h"
+#include "goalMemory.h"
 
 class MemoryManager {
 public:
@@ -22,6 +23,7 @@ public:
 private:
     ConversationMemory conversation;
     FactMemory facts;
+    GoalMemory goalMemory;
     SummaryMemory summary;
     RagMemory rag;
     LlamaEngine llamaEngine;
