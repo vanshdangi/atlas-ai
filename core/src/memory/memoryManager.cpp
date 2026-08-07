@@ -2,7 +2,7 @@
 #include "utils/timeUtils.h"
 #include "utils/utils.h"
 
-MemoryManager::MemoryManager(const std::string& data_dir, const LlamaEngine& engine)
+MemoryManager::MemoryManager(const std::string& data_dir, LlamaEngine& engine)
     : llamaEngine(engine),
     summary(data_dir + "/memory/summary.txt"),
     rag(data_dir + "/memory/episodic/episodes.json"),

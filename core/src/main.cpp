@@ -20,28 +20,24 @@
 #pragma comment(lib, "winmm.lib")
 
 int main() {
-    llama_backend_init();
     LlamaEngine llama(
-        "../../models/llama/Meta-Llama-3.1-8B-instruct-Q4_K_M.gguf"
+        "models/llama/Meta-Llama-3.1-8B-instruct-Q4_K_M.gguf"
     );
 
     WhisperSTT whisper(
-        "../../models/whisper/ggml-small.en.bin"
+        "models/whisper/ggml-small.en.bin"
     );
 
     PiperTTS piper;
-    
-    std::system("cls");
-    
     ToolRegistry registry;
     ToolManager toolManager;
 
-    TaskScheduler scheduler("../../core/data/tools/savedTasks.json", toolManager, registry, piper);
+    TaskScheduler scheduler("core/data/tools/savedTasks.json", toolManager, registry, piper);
     scheduler.start();
 
     toolManager.registerAllTools(registry, scheduler);
 
-    MemoryManager memory("../../core/data", llama);
+    MemoryManager memory("core/data", llama);
     memory.load();
 
     AutonomousSystem autonomousSystem(scheduler);
@@ -92,6 +88,5 @@ int main() {
 
     autonomousSystem.stop();
     scheduler.stop();
-    llama_backend_free();
     return 0;
 }

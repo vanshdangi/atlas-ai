@@ -7,7 +7,7 @@ static TTSPlayer player;
 
 PiperTTS::PiperTTS() {
     busy = false;
-    wavPath = "..\\..\\core\\data\\audio\\hal.wav";
+    wavPath = "core\\data\\audio\\hal.wav";
 }
 
 static std::string strip_markdown(std::string text) {
@@ -51,16 +51,16 @@ void PiperTTS::generateThread(std::string text) {
     std::string cleaned = strip_markdown(text);
 
     write_text_file(
-        "..\\..\\core\\data\\audio\\tts_input.txt",
+        "core\\data\\audio\\tts_input.txt",
         cleaned
     );
 
     std::string cmd =
-        "..\\..\\external\\piper\\piper.exe "
-        "--model ..\\..\\models\\piper\\en_US-hal_6409-medium\\en_US-hal_6409-medium.onnx "
-        "--config ..\\..\\models\\piper\\en_US-hal_6409-medium\\en_US-hal_6409-medium.onnx.json "
+        "external\\piper\\piper.exe "
+        "--model models\\piper\\en_US-hal_6409-medium\\en_US-hal_6409-medium.onnx "
+        "--config models\\piper\\en_US-hal_6409-medium\\en_US-hal_6409-medium.onnx.json "
         "--output_file " + wavPath +
-        " < ..\\..\\core\\data\\audio\\tts_input.txt";
+        " < core\\data\\audio\\tts_input.txt";
 
     // ✅ Generate wav (blocking only inside thread)
     system(cmd.c_str());

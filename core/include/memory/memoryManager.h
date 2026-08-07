@@ -8,7 +8,7 @@
 
 class MemoryManager {
 public:
-    MemoryManager(const std::string& data_dir, const LlamaEngine& engine);
+    MemoryManager(const std::string& data_dir, LlamaEngine& engine);
 
     void load();
     void save();
@@ -26,7 +26,7 @@ private:
     GoalMemory goalMemory;
     SummaryMemory summary;
     RagMemory rag;
-    LlamaEngine llamaEngine;
+    LlamaEngine& llamaEngine;
 
     size_t turn_count = 0;
     std::string path;
