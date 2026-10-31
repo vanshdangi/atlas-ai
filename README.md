@@ -12,6 +12,10 @@ The project is a learning-focused engineering sandbox for agent-style pipelines,
 4. Tools run through a decision gate and reflection loop.
 5. Responses are spoken with Piper and memory is updated.
 
+## Architecture
+
+See the [Architecture Documentation](docs/architecture/README.md)
+
 ## Current Features
 
 - Offline LLM chat using GGUF models via `llama.cpp`
